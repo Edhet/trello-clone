@@ -20,9 +20,9 @@
   "main": "main.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "tsc && cp ./src/.env.* ./dist",
     "start:dev": "NODE_ENV=DEV nodemon --watch src src/main.ts",
-    "start:prd": "tsc && cp ./src/.env.PRD ./dist && NODE_ENV=PRD node dist/main.js"
+    "start:prd": "NODE_ENV=PRD node dist/main.js"
   },
   "keywords": [
     "Express",
