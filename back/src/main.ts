@@ -1,15 +1,12 @@
-import express, { Express, Request, Response } from "express"
+import express, { Express } from "express"
+import * as dotenv from "dotenv"
+
+dotenv.config({ path: __dirname+`/.env.${process.env.NODE_ENV}`})
 
 const app: Express = express()
-
-const port = 3000;
+const port = process.env.PORT
 
 app.use(express.json())
-
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!')
-})
-
 app.listen(port, () => {
   console.log(`Server started on port ${port}`)
 })

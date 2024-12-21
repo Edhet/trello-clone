@@ -4,17 +4,12 @@
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.2",
     "@types/webpack": "^5.28.5",
-    "@types/webpack-node-externals": "^3.0.4",
     "babel-loader": "^9.2.1",
     "dotenv": "^16.4.7",
+    "nodemon": "^3.1.9",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.2",
-    "webpack": "^5.97.1",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.2.0",
-    "webpack-node-externals": "^3.0.0",
-    "webpack-shell-plugin-next": "^2.3.2"
+    "typescript": "^5.7.2"
   },
   "dependencies": {
     "express": "^4.21.2"
@@ -25,8 +20,9 @@
   "main": "main.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "start:dev": "NODE_ENV=development webpack"
+    "build": "tsc",
+    "start:dev": "NODE_ENV=DEV nodemon --watch src src/main.ts",
+    "start:prd": "tsc && cp ./src/.env.PRD ./dist && NODE_ENV=PRD node dist/main.js"
   },
   "keywords": [
     "Express",
