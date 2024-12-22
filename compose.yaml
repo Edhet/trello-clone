@@ -1,0 +1,47 @@
+name: trello_clone
+version: "1.0"
+
+services:
+    mongodb:
+      container_name: mongodb
+      image: mongo
+      restart: unless-stopped
+      ports: 
+        - ${DB_PORT}:27017
+      environment:
+        - MONGO_INITDB_ROOT_USERNAME=${DB_USER}
+        - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD}
+      volumes:
+        - mongo-data:/data/db
+      healthcheck:
+        test: ["CMD", "mongosh", "--eval", "db.stats()"]
+        interval: 10s
+        timeout: 5s
+        retries: 3
+
+    mongo-express:
+      image: mongo-express
+      restart: unless-stopped
+      ports:
+        - 8081:8081
+      environment:
+        ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_USER}
+        ME_CONFIG_MONGODB_ADMINPASSWORD: ${DB_PASSWORD}
+        ME_CONFIG_MONGODB_URL: mongodb://${DB_USER}:${DB_PASSWORD}@mongodb:${DB_PORT}/
+        ME_CONFIG_BASICAUTH: false
+
+    backend:
+        container_name: backend
+        build:
+            context: ./back
+            dockerfile: ./Dockerfile
+        ports:
+            - 8080:8080
+        environment:
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
+            - DB_PORT=${DB_PORT}
+
+volumes:
+  mongo-data:
+    driver: local
