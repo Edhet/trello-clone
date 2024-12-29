@@ -6,12 +6,14 @@ import { UserInterface } from "./user.model";
 import LoginRegisterRequest from "./login-register-request.dto";
 import { autoInjectable } from "tsyringe";
 import { AuthMiddleware } from "../shared/middleware/auth.middleware";
+import { JwtService } from "../shared/services/jwt.service";
+import { DEFAULT_UNAUTHORIZED_MESSAGE } from "../shared/constants";
 
 @autoInjectable()
 @Controller('/user')
 export class UserController {
 
-    constructor(private userService: UserService) { }
+    constructor(private userService: UserService, private jwtService: JwtService) { }
 
     @Get('', [AuthMiddleware])
     async getUser(@Req() req: Request, @Res() res: Response, @Query('id') id: string) {
@@ -30,7 +32,7 @@ export class UserController {
         return res.status(200).json({ id: user._id, username: user.username, accesses: user.accesses } as UserInterface)
     }
 
-    @Post('')
+    @Post('/register')
     async registerUser(@Req() req: Request, @Res() res: Response, @Body() userInfo: LoginRegisterRequest) {
         logger.trace(`Starting request for registering new user`)
         
@@ -56,5 +58,16 @@ export class UserController {
             return res.status(500).json({ message: "Erro no banco de dados" })
         }
         return res.status(200).json(loginResponse)
+    }
+
+    @Get('/auth')
+    async authSession(@Req() req: Request, @Res() res: Response) {
+        logger.trace(`Starting request for auth`)
+        const authHeader = req.headers.authorization
+
+        const decodedToken = this.jwtService.decodeAuthHeader(authHeader)
+        if (!decodedToken) return res.status(401).json({ message: DEFAULT_UNAUTHORIZED_MESSAGE })
+
+        return res.status(200).json({ username: decodedToken.username })
     }
 }

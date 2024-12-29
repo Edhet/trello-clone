@@ -1,29 +1,22 @@
 import { NextFunction, Request, Response } from "express";
 import { logger } from "../../main";
-import jwt from "jsonwebtoken";
 import { Middleware } from "@decorators/express";
+import { autoInjectable } from "tsyringe";
+import { JwtService } from "../services/jwt.service";
+import { DEFAULT_UNAUTHORIZED_MESSAGE } from "../constants";
 
+@autoInjectable()
 export class AuthMiddleware implements Middleware {
-    private readonly JWT_PASSWORD =  process.env.JWT_PASSWORD!.toString()
     
-    constructor() { }
+    constructor(private jwtService: JwtService) { }
 
     public use(req: Request, res: Response, next: NextFunction) {
         const authHeader = req.headers.authorization
     
-        const authPattern = /^Bearer\s[0-9a-zA-Z\-_\.]+$/
-        if (!authHeader || !authPattern.test(authHeader)) return this.unauthorizedResponse(res)
-    
-        let token
-        try {
-            token = jwt.verify(authHeader.split(" ")[1], this.JWT_PASSWORD) as any
-        } catch(e) {
-            logger.trace(e)
-            return this.unauthorizedResponse(res)
-        }
-
+        const decodedToken = this.jwtService.decodeAuthHeader(authHeader)
         const now = new Date()
-        if (now > token.expireDate)
+        
+        if (!decodedToken || now > decodedToken.expireDate)
             return this.unauthorizedResponse(res)
         
         logger.trace(`Request with valid JWT will be processed`)
@@ -32,6 +25,6 @@ export class AuthMiddleware implements Middleware {
     
     private unauthorizedResponse(res: Response) {
         logger.trace(`Request with invalid JWT returned status code 401`)
-        return res.status(401).json({ message: "Você não está autorizado para esta requisição" })
+        return res.status(401).json({ message: DEFAULT_UNAUTHORIZED_MESSAGE })
     }
 }

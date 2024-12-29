@@ -1,21 +1,17 @@
-import { injectable } from "tsyringe";
+import { autoInjectable, injectable } from "tsyringe";
 import { User } from "./user.model";
 import { logger } from "../main";
 import LoginRegisterRequest from "./login-register-request.dto";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import LoginResponse from "./login-response.dto";
+import { JwtService } from "../shared/services/jwt.service";
 
 @injectable()
+@autoInjectable()
 export class UserService {
-
     private readonly SALT_ROUNDS = Number(process.env.SALT_ROUNDS)
-    private readonly JWT_PASSWORD =  process.env.JWT_PASSWORD!.toString()
-    private readonly JWT_EXPIRE_HOURS = Number(process.env.JWT_EXPIRE_HOURS)
 
-    private readonly MILIS_IN_HOUR = 3600000
-
-    constructor() { }
+    constructor(private jwtService: JwtService) { }
 
     async getUser(id: string) {
         logger.trace(`Starting query for user with id: ${id}`)
@@ -55,19 +51,6 @@ export class UserService {
             return null
         }
 
-        logger.trace(`Creating JWT for successful login attempt`)
-        const now = new Date()
-        const expireDate = new Date(now.getTime() + this.MILIS_IN_HOUR * this.JWT_EXPIRE_HOURS)
-
-        const unsignedJwt = {
-            username: loginInfo.username,
-            authDate: now,
-            expireDate: expireDate
-        }
-
-        const token = jwt.sign(JSON.stringify(unsignedJwt), this.JWT_PASSWORD)
-        logger.trace(`JWT Created`)
-
-        return { jwt: token }
+        return { jwt: this.jwtService.createJwt(loginInfo) }
     }
 }
