@@ -53,4 +53,20 @@ export class UserService {
 
         return { jwt: this.jwtService.createJwt(loginInfo) }
     }
+
+    async changePwd(newPwd: string, username: string) {
+        logger.trace(`Started changing password`)
+        const e = new Error("Error changing password")
+        if (!newPwd) throw e
+
+        const user = await this.getUser(username)
+        if (!user) throw e
+
+        const salt = bcrypt.genSaltSync(this.SALT_ROUNDS)
+        const hash = await bcrypt.hashSync(newPwd, salt)
+
+        user.password = hash
+        user.save()
+        logger.trace(`Password changed`)
+    }
 }
