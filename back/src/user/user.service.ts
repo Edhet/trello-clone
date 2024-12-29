@@ -7,6 +7,8 @@ import LoginResponse from "./login-response.dto";
 import { JwtService } from "../shared/services/jwt.service";
 import BadRequestError from "../shared/error/bad-request.error";
 import NotFoundError from "../shared/error/not-found.error";
+import BoardInterface from "../board/board.model";
+import AccessType from "./access-type.enum";
 
 @injectable()
 @autoInjectable()
@@ -16,6 +18,14 @@ export class UserService {
     private readonly EMAIL_PATTERN = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/
 
     constructor(private jwtService: JwtService) { }
+
+    async getUserById(id: string) {
+        logger.trace(`Starting query for user with id: ${id}`)
+
+        const user = await User.findById(id)
+        if (!user) throw new NotFoundError(`Usuário com id '${id}' não existe`)
+        return user
+    }
 
     async getUser(email: string) {
         logger.trace(`Starting query for user with email: ${email}`)
@@ -49,7 +59,7 @@ export class UserService {
     }
 
     async login(loginInfo: LoginRegisterRequest): Promise<LoginResponse | undefined> {
-        logger.trace(`Making login on account with email: ${loginInfo.email}`)
+        logger.trace(`Making login on account with email ${loginInfo.email}`)
 
         if (!loginInfo.password) throw new BadRequestError("Senha vazia")
 
@@ -72,5 +82,56 @@ export class UserService {
         user.password = hash
         user.save()
         logger.trace(`Password changed`)
+    }
+
+    async addAccess(userEmail: string, board: BoardInterface, type: AccessType) {
+        logger.trace(`Adding access for ${userEmail} to board`)
+        const user = await this.getUser(userEmail)
+
+        for (let accesses of user.accesses) {
+            if (accesses.board as any == board._id) throw new BadRequestError("Usuário já tem permissão")
+        }
+
+        const newAccess = { type, board }
+        user.accesses.push(newAccess)
+
+        await user.save()
+        logger.trace(`Access created`)
+    }
+
+    async removeAccess(userEmail: string, boardId: string) {
+        logger.trace(`Removing access for ${userEmail} to board`)
+        const user = await this.getUser(userEmail)
+        const oldAc = user.accesses.length
+
+        user.accesses = user.accesses.filter(ac => ac.board as any != boardId)
+        if (oldAc == user.accesses.length) throw new BadRequestError("Usuário já não possui essa permissão")
+        
+        await user.save()
+        logger.trace(`Access removed`)
+    }
+
+    async removeAllBoardAccesses(boardId: string) {
+        logger.trace(`Deleting all board accesses for board`)
+        const usersWithAccess = await User.find({ 'accesses.board': boardId })
+
+        for (let user of usersWithAccess) {
+            user.accesses = user.accesses.filter(ac => ac.board as any != boardId)
+        }
+
+        User.bulkSave(usersWithAccess)
+        logger.trace(`All accesses for board deleted`)
+    }
+
+    async favoriteBoard(boardId: string, userEmail: string) {
+        logger.trace(`Favoriting board`)
+        const user = await this.getUser(userEmail)
+
+        user.accesses.forEach(access => {
+            if (access.board as any == boardId) access.favorite = !access.favorite
+        })
+
+        user.save()
+        logger.trace(`Board favorited`)
     }
 }

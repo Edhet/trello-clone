@@ -2,7 +2,7 @@ import { injectable } from "tsyringe";
 import LoginRegisterRequest from "../../user/login-register-request.dto";
 import { logger } from "../../main";
 import jwt from "jsonwebtoken";
-import TokenInfo from "../models/token-info.model";
+import TokenInfo from "../models/token-info.dto";
 import BadRequestError from "../error/bad-request.error";
 
 @injectable()

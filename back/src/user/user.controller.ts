@@ -6,14 +6,13 @@ import { UserInterface } from "./user.model";
 import LoginRegisterRequest from "./login-register-request.dto";
 import { autoInjectable } from "tsyringe";
 import { AuthMiddleware } from "../shared/middleware/auth.middleware";
-import { JwtService } from "../shared/services/jwt.service";
 import { extractKnownValidToken } from "../shared/util";
 
 @autoInjectable()
 @Controller('/user')
 export class UserController {
 
-    constructor(private userService: UserService, private jwtService: JwtService) { }
+    constructor(private userService: UserService) { }
 
     @Post('/register')
     async registerUser(@Req() req: Request, @Res() res: Response, @Body() userInfo: LoginRegisterRequest) {
@@ -56,6 +55,6 @@ export class UserController {
         const decodedToken = extractKnownValidToken(req)
         await this.userService.changePwd(newPwd.novaSenha, decodedToken.email)
 
-        return res.status(201).json({ message: "Senha alterada com sucesso" })
+        return res.status(200).json()
     }
 }
