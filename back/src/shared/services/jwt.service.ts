@@ -3,6 +3,7 @@ import LoginRegisterRequest from "../../user/login-register-request.dto";
 import { logger } from "../../main";
 import jwt from "jsonwebtoken";
 import TokenInfo from "../models/token-info.model";
+import BadRequestError from "../error/bad-request.error";
 
 @injectable()
 export class JwtService {
@@ -22,7 +23,7 @@ export class JwtService {
         const expireDate = new Date(now.getTime() + this.MILIS_IN_HOUR * this.JWT_EXPIRE_HOURS)
 
         const unsignedJwt: TokenInfo = {
-            username: loginInfo.username,
+            email: loginInfo.email,
             authDate: now,
             expireDate: expireDate
         }
@@ -33,10 +34,9 @@ export class JwtService {
 
     decodeAuthHeader(authHeader: string | undefined) {
         const token = this.extractTokenFromAuthHeader(authHeader)
-        if (!token) return
+        if (!token) throw new BadRequestError("Header de autorização ausente")
 
         const decodedToken = this.decodeToken(token)
-        if (!decodedToken) return
 
         return decodedToken
     }
@@ -53,7 +53,7 @@ export class JwtService {
         try {
             token = jwt.verify(jwtToken, this.JWT_PASSWORD) as TokenInfo
         } catch(e) {
-            logger.error(e)
+            throw new BadRequestError("Token inválido")
         }
         return token
     }

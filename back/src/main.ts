@@ -1,11 +1,12 @@
 import "reflect-metadata"
 import express, { Express } from "express"
 import * as dotenv from "dotenv"
-import { attachControllers } from "@decorators/express"
+import { attachControllers, Container, ERROR_MIDDLEWARE } from "@decorators/express"
 import { HealthController } from "./health/health.controller"
 import mongoose from "mongoose"
 import { Logger } from "tslog"
 import { UserController } from "./user/user.controller"
+import { ErrorHandler } from "./shared/middleware/error.middleware"
 
 const env = process.env.NODE_ENV
 dotenv.config({ path: __dirname + `/.env.${env}` })
@@ -23,6 +24,9 @@ app.use(express.json())
 attachControllers(app, [
   HealthController,
   UserController
+])
+Container.provide([
+  { provide: ERROR_MIDDLEWARE, useClass: ErrorHandler }
 ])
 app.listen(port, () => {
   logger.info(`Server started on port: ${port}`)

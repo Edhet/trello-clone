@@ -5,29 +5,39 @@ import LoginRegisterRequest from "./login-register-request.dto";
 import bcrypt from "bcryptjs";
 import LoginResponse from "./login-response.dto";
 import { JwtService } from "../shared/services/jwt.service";
+import BadRequestError from "../shared/error/bad-request.error";
+import NotFoundError from "../shared/error/not-found.error";
 
 @injectable()
 @autoInjectable()
 export class UserService {
+
     private readonly SALT_ROUNDS = Number(process.env.SALT_ROUNDS)
+    private readonly EMAIL_PATTERN = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/
 
     constructor(private jwtService: JwtService) { }
 
-    async getUser(username: string) {
-        logger.trace(`Starting query for user with username: ${username}`)
-        const user = await User.findOne({username: username})
+    async getUser(email: string) {
+        logger.trace(`Starting query for user with email: ${email}`)
+
+        if (!email) throw new BadRequestError("Email vazio")
+        const user = await User.findOne({ email: email })
+        if (!user) throw new NotFoundError(`Usuário com email '${email}' não existe`)
         return user
     }
 
     async createUser(registerInfo: LoginRegisterRequest): Promise<LoginResponse> {
         logger.trace(`Creating new user with info: `, registerInfo)
 
+        if (!this.EMAIL_PATTERN.test(registerInfo.email)) throw new BadRequestError("Formato de email inválido")
+
         const salt = bcrypt.genSaltSync(this.SALT_ROUNDS)
         const hash = await bcrypt.hashSync(registerInfo.password, salt)
 
-        const newUser = new User({ 
+        const newUser = new User({
+            email: registerInfo.email,
             username: registerInfo.username,
-            password: hash, 
+            password: hash,
             accesses: []
         })
         await newUser.save()
@@ -38,29 +48,23 @@ export class UserService {
         return jwt
     }
 
-    async login(loginInfo: LoginRegisterRequest): Promise<LoginResponse | null> {
-        logger.trace(`Making login on account with username: ${loginInfo.username}`)
+    async login(loginInfo: LoginRegisterRequest): Promise<LoginResponse | undefined> {
+        logger.trace(`Making login on account with email: ${loginInfo.email}`)
 
-        const user = await User.findOne({ username: loginInfo.username })
-        if (!user) {
-            logger.trace(`User with username ${loginInfo.username} not found`)
-            return null
-        }
-        if (!bcrypt.compareSync(loginInfo.password, user.password!)) {
-            logger.trace(`Login try on user ${loginInfo.username} with wrong password`)
-            return null
-        }
+        if (!loginInfo.password) throw new BadRequestError("Senha vazia")
+
+        const user = await this.getUser(loginInfo.email)
+
+        if (!loginInfo.password || !bcrypt.compareSync(loginInfo.password, user!.password!)) throw new BadRequestError("Senha inválida")
 
         return { jwt: this.jwtService.createJwt(loginInfo) }
     }
 
-    async changePwd(newPwd: string, username: string) {
+    async changePwd(newPwd: string, email: string) {
         logger.trace(`Started changing password`)
-        const e = new Error("Error changing password")
-        if (!newPwd) throw e
+        if (!newPwd) throw new BadRequestError("Senha sem vazia")
 
-        const user = await this.getUser(username)
-        if (!user) throw e
+        const user = await this.getUser(email)
 
         const salt = bcrypt.genSaltSync(this.SALT_ROUNDS)
         const hash = await bcrypt.hashSync(newPwd, salt)

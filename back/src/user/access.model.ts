@@ -1,5 +1,5 @@
-import AccessType from "./access-type.model"
-import BoardInterface from "./board.model"
+import BoardInterface from "../board/board.model"
+import AccessType from "./access-type.enum"
 
 export default interface AccessInterface {
     type: AccessType

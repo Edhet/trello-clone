@@ -1,5 +1,5 @@
 export default interface TokenInfo {
-    username: string
+    email: string
     authDate: Date
     expireDate: Date
 }
