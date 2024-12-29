@@ -13,9 +13,9 @@ export class UserService {
 
     constructor(private jwtService: JwtService) { }
 
-    async getUser(id: string) {
-        logger.trace(`Starting query for user with id: ${id}`)
-        const user = await User.findById(id)
+    async getUser(username: string) {
+        logger.trace(`Starting query for user with username: ${username}`)
+        const user = await User.findOne({username: username})
         return user
     }
 

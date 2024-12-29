@@ -16,12 +16,12 @@ export class UserController {
     constructor(private userService: UserService, private jwtService: JwtService) { }
 
     @Get('', [AuthMiddleware])
-    async getUser(@Req() req: Request, @Res() res: Response, @Query('id') id: string) {
+    async getUser(@Req() req: Request, @Res() res: Response, @Query('username') username: string) {
         logger.trace(`Starting request for getUser`)
 
         let user
         try {
-            user = await this.userService.getUser(id)
+            user = await this.userService.getUser(username)
         } catch (e) {
             logger.error(e)
             return res.status(500).json({ message: "Erro no banco de dados" })
