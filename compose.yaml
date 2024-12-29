@@ -15,10 +15,10 @@ services:
       volumes:
         - mongo-data:/data/db
       healthcheck:
-        test: ["CMD", "mongosh", "--eval", "db.stats()"]
-        interval: 10s
-        timeout: 5s
-        retries: 3
+        test: echo 'db.runCommand({serverStatus:1}).ok' | mongosh admin -u $$MONGO_INITDB_ROOT_USERNAME -p $$MONGO_INITDB_ROOT_PASSWORD --quiet | grep 1
+        interval: 30s
+        timeout: 10s
+        retries: 5
 
     mongo-express:
       image: mongo-express
@@ -44,6 +44,10 @@ services:
             - DB_PORT=${DB_PORT}
             - DB_URL=mongodb
             - JWT_PASSWORD=${JWT_PASSWORD}
+        depends_on:
+          mongodb:
+            condition: service_healthy
+
 volumes:
   mongo-data:
     driver: local
