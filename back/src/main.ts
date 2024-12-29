@@ -1,19 +1,29 @@
+import "reflect-metadata"
 import express, { Express } from "express"
 import * as dotenv from "dotenv"
 import { attachControllers } from "@decorators/express"
-import { HealthController } from "./controllers/health.controller"
+import { HealthController } from "./health/health.controller"
+import mongoose from "mongoose"
+import { Logger } from "tslog"
+import { UserController } from "./user/user.controller"
 
-dotenv.config({ path: __dirname+`/.env.${process.env.NODE_ENV}`})
+const env = process.env.NODE_ENV
+dotenv.config({ path: __dirname + `/.env.${env}` })
+
+export const logger = new Logger({ name: "main", minLevel: env == "PRD" ? 5 : 0 })
+
+mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_URL}:${process.env.DB_PORT}/trello-clone?authSource=${process.env.DB_USER}`)
+mongoose.connection.on('error', (_error) => { logger.fatal(`Could not connect to mongodb server with mongoose`) })
+mongoose.connection.on('connected', (_error) => { logger.info(`Connected to mongodb server with mongoose`) })
+mongoose.connection.on('disconnected', (_error) => { logger.info(`Disconnect to mongodb server with mongoose`) })
 
 const app: Express = express()
 const port = process.env.PORT
-
 app.use(express.json())
-
 attachControllers(app, [
-  HealthController
+  HealthController,
+  UserController
 ])
-
 app.listen(port, () => {
-  console.log(`Server started on port ${port}`)
+  logger.info(`Server started on port: ${port}`)
 })
