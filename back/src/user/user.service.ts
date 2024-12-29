@@ -13,6 +13,8 @@ export class UserService {
     private readonly JWT_PASSWORD =  process.env.JWT_PASSWORD!.toString()
     private readonly JWT_EXPIRE_HOURS = Number(process.env.JWT_EXPIRE_HOURS)
 
+    private readonly MILIS_IN_HOUR = 3600000
+
     constructor() { }
 
     async getUser(id: string) {
@@ -54,10 +56,13 @@ export class UserService {
         }
 
         logger.trace(`Creating JWT for successful login attempt`)
+        const now = new Date()
+        const expireDate = new Date(now.getTime() + this.MILIS_IN_HOUR * this.JWT_EXPIRE_HOURS)
+
         const unsignedJwt = {
             username: loginInfo.username,
-            authDate: new Date(),
-            expireDate: new Date().getHours() + this.JWT_EXPIRE_HOURS
+            authDate: now,
+            expireDate: expireDate
         }
 
         const token = jwt.sign(JSON.stringify(unsignedJwt), this.JWT_PASSWORD)

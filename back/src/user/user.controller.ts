@@ -1,4 +1,4 @@
-import { attachMiddleware, Body, Controller, Get, Post, Query, Req, Res } from "@decorators/express";
+import { Body, Controller, Get, Post, Query, Req, Res } from "@decorators/express";
 import { Request, Response } from "express";
 import { UserService } from "./user.service";
 import { logger } from "../main";

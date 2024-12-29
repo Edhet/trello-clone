@@ -16,19 +16,17 @@ export class AuthMiddleware implements Middleware {
     
         let token
         try {
-            token = jwt.verify(authHeader.split(" ")[1], this.JWT_PASSWORD)
+            token = jwt.verify(authHeader.split(" ")[1], this.JWT_PASSWORD) as any
         } catch(e) {
             logger.trace(e)
             return this.unauthorizedResponse(res)
         }
-        
-        if (typeof token != 'string')
-            return this.unauthorizedResponse(res)
-    
+
         const now = new Date()
-        if (now > JSON.parse(token).expireDate)
+        if (now > token.expireDate)
             return this.unauthorizedResponse(res)
-    
+        
+        logger.trace(`Request with valid JWT will be processed`)
         next()
     }
     
