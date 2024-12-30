@@ -6,6 +6,8 @@ import BadRequestError from "../shared/error/bad-request.error";
 import { logger } from "../main";
 import AccessType from "../user/access-type.enum";
 import PermissionRequest from "./access-request.dto";
+import path from "path";
+import NotFoundError from "../shared/error/not-found.error";
 
 @injectable()
 @autoInjectable()
@@ -24,6 +26,32 @@ export class BoardService {
         logger.trace(`Boards fetched`)
 
         return userAccessesAndBoards
+    }
+
+    async getBoard(boardId: string, email: string) {
+        logger.trace(`Getting board for user ${email}`)
+        const user = await (await this.userService.getUser(email))
+            .populate({ path: 'accesses', populate: { path: 'board', populate: { path: 'lists', populate: { path: 'cards' } } } })
+
+        for (let access of user.accesses) {
+            if (access.board._id as any == boardId) {
+                logger.trace(`Board fetched`)
+                return access.board
+            }
+        }
+
+        throw new BadRequestError("Quadro não está associado a usuário")
+    }
+
+    async getBoardById(boardId: string) {
+        logger.trace(`Getting board by id with id ${boardId}`)
+
+        const board = await Board.findById(boardId).populate({ path: 'lists', populate: { path: 'card' } })
+        
+        if (!board) 
+            throw new NotFoundError(`Quadro com id ${boardId} não existe`)
+        
+        return board
     }
 
     async createBoard(boardInfo: NewBoardRequest, ownerEmail: string) {
@@ -81,7 +109,7 @@ export class BoardService {
             if (access.board as any == request.boardId) {
                 if (access.type != AccessType.OWNER) throw new BadRequestError("Você não tem permissão para esta operação")
 
-                
+
                 this.userService.addAccess(request.userEmail, access.board, request.accessType)
                 logger.trace(`Permission granted`)
                 return
@@ -124,9 +152,8 @@ export class BoardService {
                 oldBoard!.backgroundColor = newInfo.backgroundColor
                 oldBoard!.textColor = newInfo.textColor
 
-                oldBoard!.save()
                 logger.trace(`Board edited`)
-                return
+                return oldBoard!.save()
             }
         }
         throw new BadRequestError("Quadro não está associado a usuário")

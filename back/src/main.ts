@@ -8,6 +8,7 @@ import { Logger } from "tslog"
 import { UserController } from "./user/user.controller"
 import { ErrorHandler } from "./shared/middleware/error.middleware"
 import { BoardController } from "./board/board.controller"
+import { ListController } from "./lists/list.controller"
 
 const env = process.env.NODE_ENV
 dotenv.config({ path: __dirname + `/.env.${env}` })
@@ -27,7 +28,8 @@ app.use(express.json())
 attachControllers(app, [
   HealthController,
   UserController,
-  BoardController
+  BoardController,
+  ListController
 ])
 
 Container.provide([

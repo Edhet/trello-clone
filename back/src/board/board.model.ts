@@ -13,7 +13,14 @@ export const boardSchema = new Schema<BoardInterface>({
     title: { type: String, required: true },
     backgroundColor: { type: String, required: true },
     textColor: { type: String, required: true },
-    lists: [{ type: Schema.ObjectId, ref: 'List' }]
+    lists: [{
+        title: { type: String, required: true },
+        order: { type: Number, required: true },
+        cards: [{
+            priority: { type: Number, required: true },
+            content: { type: String, required: true }
+        }]
+     }]
 })
 
 export const Board = model<BoardInterface>('Board', boardSchema)

@@ -1,6 +1,6 @@
 import { autoInjectable } from "tsyringe";
 import { BoardService } from "./board.service";
-import { Body, Controller, Delete, Get, Patch, Post, Put, Query, Req, Res } from "@decorators/express";
+import { Body, Controller, Delete, Get, Params, Patch, Post, Put, Query, Req, Res } from "@decorators/express";
 import { logger } from "../main";
 import { AuthMiddleware } from "../shared/middleware/auth.middleware";
 import { Request, Response } from "express";
@@ -21,6 +21,14 @@ export class BoardController {
         const email = extractKnownValidToken(req).email
 
         return res.status(200).json({ boards: await this.boardService.getUserBoards(email) })
+    }
+
+    @Get('/:id')
+    async getBoard(@Req() req: Request, @Res() res: Response, @Params('id') boardId: string) {
+        logger.trace(`Starting request to get specific board`)
+        const email = extractKnownValidToken(req).email
+        
+        return res.status(200).json({ board: await this.boardService.getBoard(boardId, email) })
     }
 
     @Post('/new')
@@ -73,7 +81,7 @@ export class BoardController {
         logger.trace(`Starting request to edit board info`)
         const email = extractKnownValidToken(req).email
 
-        await this.boardService.editBoard(email, boardId, newInfo)
-        return res.status(200).json()
+        const edited = await this.boardService.editBoard(email, boardId, newInfo) as BoardInterface
+        return res.status(200).json(edited)
     }
 }
