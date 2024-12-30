@@ -23,7 +23,7 @@ export class CardController {
         return res.status(201).json(newCard)
     }
  
-    @Delete('/new')
+    @Delete('/delete')
     async deleteCard(@Req() req: Request, @Res() res: Response, @Query('board-id') boardId: string,  @Query('list-id') listId: string, @Query('id') cardId: string) {
         logger.trace(`Starting request to delete a card`)
         const email = extractKnownValidToken(req).email
