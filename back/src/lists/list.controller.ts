@@ -6,7 +6,7 @@ import { Request, Response } from "express";
 import { logger } from "../main";
 import { extractKnownValidToken } from "../shared/util";
 import NewListRequest from "./new-list-request.dto";
-import { CardInterface } from "./card.model";
+import { CardInterface } from "../card/card.model";
 
 @autoInjectable()
 @Controller("/lists", [AuthMiddleware])
@@ -42,15 +42,5 @@ export class ListController {
         const edited = this.listService.editList(boardId, email, request)
 
         return res.status(200).json(edited)
-    }
-
-    @Post('/cards/new')
-    async createCard(@Req() req: Request, @Res() res: Response, @Query('board-id') boardId: string,  @Params('list-id') listId: string, @Body() request: CardInterface) {
-        logger.trace(`Starting request to create a new card`)
-        const email = extractKnownValidToken(req).email
-        
-        const newCard = await this.listService.createCard(boardId, email, listId, request)
-
-        return res.status(201).json(newCard)
     }
 }

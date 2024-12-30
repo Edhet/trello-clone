@@ -9,6 +9,7 @@ import { UserController } from "./user/user.controller"
 import { ErrorHandler } from "./shared/middleware/error.middleware"
 import { BoardController } from "./board/board.controller"
 import { ListController } from "./lists/list.controller"
+import { CardController } from "./card/card.controller"
 
 const env = process.env.NODE_ENV
 dotenv.config({ path: __dirname + `/.env.${env}` })
@@ -29,7 +30,8 @@ attachControllers(app, [
   HealthController,
   UserController,
   BoardController,
-  ListController
+  ListController,
+  CardController
 ])
 
 Container.provide([

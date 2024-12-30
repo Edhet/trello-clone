@@ -1,4 +1,4 @@
-import { CardInterface } from "./card.model"
+import { CardInterface } from "../card/card.model"
 
 export interface ListInterface {
     _id?: string
