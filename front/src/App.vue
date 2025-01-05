@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+  import  router from '@/router/index';
+  import { RouterLink, RouterView} from 'vue-router'
+  import { computed } from 'vue';
+  const showSidebar = computed(() => {
+    const currentPath = router.currentRoute.value.path;
+    return !['/login', '/cadastro'].includes(currentPath);
+  });
 </script>
 
 <template>
@@ -10,6 +16,7 @@ import { RouterLink, RouterView } from 'vue-router'
         class="bg-deep-purple"
         theme="dark"
         permanent
+        v-if="showSidebar"
       >
         <v-list
           nav

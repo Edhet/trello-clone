@@ -1,5 +1,6 @@
 import "reflect-metadata"
 import express, { Express } from "express"
+import cors from "cors";
 import * as dotenv from "dotenv"
 import { attachControllers, Container, ERROR_MIDDLEWARE } from "@decorators/express"
 import { HealthController } from "./health/health.controller"
@@ -23,6 +24,12 @@ mongoose.connection.on('disconnected', (_error) => { logger.info(`Disconnect to 
 
 const app: Express = express()
 const port = process.env.PORT
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST'], 
+  credentials: true, 
+}));
 
 app.use(express.json())
 
