@@ -18,7 +18,9 @@ export const boardSchema = new Schema<BoardInterface>({
         order: { type: Number, required: true },
         cards: [{
             priority: { type: Number, required: true },
-            content: { type: String, required: true }
+            content: { type: String, required: true },
+            createdAt: {type: Date, required: true, immutable: true },
+            updatedAt: {type: Date, required: true }
         }]
      }]
 })

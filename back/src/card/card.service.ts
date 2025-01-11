@@ -48,7 +48,9 @@ export class CardService {
 
         const nextCard: CardInterface = {
             content: cardInfo.content,
-            priority: nextPriority
+            priority: nextPriority,
+            createdAt: new Date(),
+            updatedAt: new Date()
         }
         listToAddCard.cards.push(nextCard)
 
@@ -144,6 +146,7 @@ export class CardService {
             throw new BadRequestError("Cartão não encontrado na lista")
         }
 
+        newCardInfo.updatedAt = new Date()
         Object.assign(cardToEdit, newCardInfo)
         await board.save()
 
