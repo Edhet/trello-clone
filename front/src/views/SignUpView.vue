@@ -1,51 +1,69 @@
 <script setup lang="ts">
+import InputComponent from "@/components/InputComponent.vue"
+import ButtonComponent from "@/components/ButtonComponent.vue"
+import type {ISingUp} from "@/models/ISingUp.ts";
 import { ref } from 'vue';
 import type LoginRegisterModel from '@/models/LoginRegisterModel';
 import requestService from '@/services/requestService'
 
-const form = ref<LoginRegisterModel>({
-  username: '',
-  email: '',
-  password: '',
-})
 
-async function registerUser(e: Event) {
-  e.preventDefault();
-  try {
-    const { data } = await requestService.post('/user/register', form.value)
-    console.log(data)
-  } catch (error) {
-    console.log(error)
+async function registerUser(e: SubmitEvent) {
+  e.preventDefault()
+  const form = document.querySelector('#loginForm') as HTMLFormElement
+  const formdata = new FormData(form)
+
+  const data :ISingUp = {
+    name: formdata.get('name') as string,
+    email: formdata.get('email') as string,
+    password: formdata.get('password') as string,
+    passwordConfirmation: formdata.get('passwordConfirmation') as string
   }
+  if(!data.email.trim() || !data.name.trim() || !data.password.trim() || !data.passwordConfirmation.trim()) {
+    alert("Todos os campos são obrigatórios!");
+    return;
+  }
+  console.log(data)
+
+  const response = await fetch('http://localhost:8080/user/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  const dadosServidor = await response.json()
+
+  console.log('resposta da api', dadosServidor)
 }
 </script>
 
 <template>
-  <div class="flex items-center justify-center h-screen">
-    <div class="flex flex-col items-center justify-center border-2 h-96 p-6 login-containeir">
-      <h1 class="font-bold mb-6">TrelloLike</h1>
-      <h3>Entre com seus dados para realizar o Cadastro</h3>
-      <form class="flex flex-col items-center justify-center" id="signup-form" @submit.prevent="registerUser">
-        <input v-model="form.username" type="text" name="username" id="username" class="border rounded-sm p-2 my-2 w-64"
-          placeholder="Insira seu nome de usuário" required />
-        <input v-model="form.email" type="email" name="email" id="email" class="border rounded-sm p-2 my-2 w-64"
-          placeholder="Insira seu e-mail" required />
-        <input v-model="form.password" type="password" name="password" id="password"
-          class="border rounded-sm p-2 my-2 w-64" placeholder="Insira sua senha" required />
-        <button type="submit" class="bg-blue-500 text-white p-2 mt-6 rounded-sm w-32">Cadastrar</button>
-      </form>
-      <RouterLink class="login-link mt-2" to="/login">Já possui login? Clique aqui!</RouterLink>
+  <div class="flex items-center h-[100vh]">
+
+    <div class="w-[60%] p-10 flex flex-col gap-10 px-32">
+      <h1> TaskFlow</h1>
+      <p> Este aplicativo foi desenvolvido para ajudá-lo a organizar
+        e gerenciar suas tarefas de forma eficiente,
+        com uma interface simples e intuitiva,
+        inspirada nas funcionalidades do Trello.</p>
+      <p> Nosso objetivo é oferecer uma experiência
+        prática e fluida para você se concentrar no
+        que importa: alcançar seus objetivos.
+        Prepare-se para começar a planejar seu sucesso!</p>
     </div>
+
+    <form id="loginForm" class=" h-[100%] bg-[#F3F5F6] w-[40%] p-10 flex flex-col gap-3 justify-center">
+      <InputComponent name="name" label="Nome" placeholder="meunome"/>
+      <InputComponent name="email" label="Email" placeholder="meu@gmail.com"/>
+      <InputComponent name="password"  label="Senha" placeholder="******"/>
+      <InputComponent name="passwordConfirmation"  label="Confirme a Senha" placeholder="******"/>
+      <ButtonComponent :buttonFunction ="registerUser" id="botao" texto="Cadastrar" textcolor="blue-300" bgcolor="gray-500"/>
+
+      <div class="flex flex-col align-center gap-4">
+        <p>Já possui conta?</p>
+        <RouterLink class="p-3 bg-gray-300 rounded-md border-solid" to="/login">Entrar</RouterLink>
+      </div>
+
+    </form>
+
   </div>
 </template>
 
-<style scoped>
-.login-container {
-  width: 100%;
-}
-
-.login-link:hover {
-  color: blue;
-  text-decoration: underline;
-}
-</style>

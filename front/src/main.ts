@@ -15,6 +15,7 @@ import '@mdi/font/css/materialdesignicons.css'
 // Components
 import CardComponent from './components/CardComponent.vue'
 import BoardComponent from './components/BoardComponent.vue'
+import MyBoardsComponent from './components/MyBoardsComponent.vue'
 import ListComponent from './components/ListComponent.vue'
 import CollectionComponent from './components/CollectionComponent.vue'
 
@@ -35,6 +36,7 @@ app.use(vuetify)
 
 app.component('CardComponent', CardComponent)
 app.component('BoardComponent', BoardComponent)
+app.component('MyBoardsComponent', BoardComponent)
 app.component('ListComponent', ListComponent)
 app.component('CollectionComponent', CollectionComponent)
 

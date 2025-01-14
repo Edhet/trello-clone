@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuth } from '@/stores/auth'
 import HomeView from '../views/HomeView.vue'
 import BoardView from '@/views/MyBoardsView.vue'
 import LoginView from '@/views/LoginView.vue'
@@ -9,7 +8,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'home',
       component: HomeView,
       meta: {
@@ -22,9 +21,17 @@ const router = createRouter({
       component: SignUpView,
     },
     {
-      path: '/login',
-      name: 'login',
+      path: '/',
+      redirect: { path: "/login" },
+      name: '/',
       component: LoginView,
+        children: [
+            {
+                path: "/login",
+                name: "login",
+                component: LoginView,
+            },
+        ],
     },
     {
       path: '/quadros',
