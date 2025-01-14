@@ -1,24 +1,31 @@
 <script setup lang="ts">
-  import type LoginRegisterModel from '@/models/LoginRegisterModel';
-  import { ref } from 'vue';
+import { ref } from 'vue';
+import { useAuth } from '@/stores/auth';
+import type LoginRegisterModel from '@/models/LoginRegisterModel';
+import requestService from '@/services/requestService';
+import { useRouter, useRoute } from 'vue-router';
 
-  const form = ref<LoginRegisterModel>({
-    username: '',
-    email: '',
-    password: '',
-  })
+const auth = useAuth();
+const router = useRouter();
+const route = useRoute();
 
-  async function userLogin(e: Event) {
-    e.preventDefault();
+const form = ref<LoginRegisterModel>({
+  username: '',
+  email: '',
+  password: '',
+})
 
-    fetch('http://localhost:8080/user/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form.value),
-    })
-    .then(response => response.json())
-    .then(data => console.log('Resposta do servidor:', data));
+async function userLogin(e: Event) {
+  e.preventDefault();
+  try {
+    const { data } = await requestService.post('/user/login', form.value)
+    auth.setToken(data.jwt)
+    const redirectPath = route.query.redirect || '/';
+    router.push(redirectPath as string);
+  } catch (error) {
+    console.log(error)
   }
+}
 </script>
 
 <template>
@@ -29,22 +36,10 @@
       </div>
       <p>Entre com seu e-mail e senha para realizar o login</p>
       <form class="flex flex-col items-center justify-center" @submit.prevent="userLogin">
-        <input
-          type="email"
-          name="email"
-          id="email"
-          class="border rounded-sm p-2 my-2 w-64"
-          placeholder="Insira seu e-mail"
-          v-model="form.email"
-        />
-        <input
-          type="password"
-          name="senha"
-          id="senha"
-          class="border rounded-sm p-2 my-2 w-64"
-          placeholder="Insira sua senha"
-          v-model="form.password"
-        />
+        <input type="email" name="email" id="email" class="border rounded-sm p-2 my-2 w-64"
+          placeholder="Insira seu e-mail" v-model="form.email" />
+        <input type="password" name="senha" id="senha" class="border rounded-sm p-2 my-2 w-64"
+          placeholder="Insira sua senha" v-model="form.password" />
         <button class="bg-blue-500 text-white p-2 mt-6 rounded-sm w-32">Login</button>
       </form>
       <RouterLink class="cadastro-link mt-2" to="/cadastro">Não possui cadastro? Crie uma aqui!</RouterLink>
@@ -53,11 +48,12 @@
 </template>
 
 <style scoped>
-  p{
-    font-size: 0.9rem;
-  }
-  .cadastro-link:hover{
-    color: blue;
-    text-decoration: underline;
-  }
+p {
+  font-size: 0.9rem;
+}
+
+.cadastro-link:hover {
+  color: blue;
+  text-decoration: underline;
+}
 </style>
