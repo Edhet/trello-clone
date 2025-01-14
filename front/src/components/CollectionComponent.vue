@@ -1,22 +1,15 @@
+<script setup lang="ts">
+import type {ICollection} from "@/models/ICollection.ts";
+  defineProps<{collection: ICollection}>()
+</script>
+
 <template>
-  <div class="collection-container">
-    <v-card
-      title="Titulo da Coleção"
-      class="collection-component"
-    >
+  <div class="collection-container min-w-[300px]">
+    <v-card :title="collection.name" class="collection-component">
       <template v-slot:append>
-            <v-btn
-              class="text-none"
-              color="primary"
-              icon="mdi-pencil"
-              variant="text"
-              slim
-            ></v-btn>
+        <v-btn class="text-none" color="primary" icon="mdi-pencil" variant="text" slim></v-btn>
+        <v-btn class="text-none" color="primary" icon="mdi-delete" variant="text" slim></v-btn>
       </template>
-      <v-divider class="border-opacity-100" thickness="2" ></v-divider>
-      <v-card-actions>
-        <v-btn>Adicionar um Quadro</v-btn>
-      </v-card-actions>
     </v-card>
   </div>
 </template>

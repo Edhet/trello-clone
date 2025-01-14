@@ -1,43 +1,76 @@
+<script setup lang="ts">
+import type { IBoard } from "@/models/IBoard";
+import type { IList } from "@/models/IList";
+import ListComponent from "@/components/ListComponent.vue";
+
+defineProps<{ board: IBoard }>();
+
+// Mock de uma lista
+const tarefasDeTrabalho: IList[] = [
+    {
+        title: "Lista de Tarefas de Trabalho",
+        cards: [
+            {
+                id: 1,
+                description: "Completar o relatório do projeto",
+                createdAt: "2025-01-01T10:00:00Z",
+                updatedAt: "2025-01-02T15:30:00Z",
+            },
+            {
+                id: 2,
+                description: "Preparar os slides para a reunião",
+                createdAt: "2025-01-03T08:00:00Z",
+                updatedAt: "2025-01-03T12:45:00Z",
+            },
+            {
+                id: 3,
+                description: "Atualizar a equipe sobre o progresso",
+                createdAt: "2025-01-04T09:00:00Z",
+                updatedAt: "2025-01-04T11:30:00Z",
+            },
+        ],
+    },
+    {
+        title: "Lista de Compras do Mês",
+        cards: [
+            {
+                id: 1,
+                description: "Comprar leite e ovos",
+                createdAt: "2025-01-10T14:20:00Z",
+                updatedAt: "2025-01-10T16:00:00Z",
+            },
+            {
+                id: 2,
+                description: "Comprar frutas e vegetais",
+                createdAt: "2025-01-11T09:30:00Z",
+                updatedAt: "2025-01-11T10:00:00Z",
+            },
+            {
+                id: 3,
+                description: "Comprar produtos de limpeza",
+                createdAt: "2025-01-12T10:00:00Z",
+                updatedAt: "2025-01-12T11:15:00Z",
+            },
+        ],
+    },
+];
+
+// fetch da lista
+// Aqui estamos simulando a resposta do servidor
+const listaResponse = tarefasDeTrabalho;
+</script>
+
 <template>
-  <div class="board-container">
-    <v-card
-      title="Titulo do Quadro"
-      color=""
-      class="board-component"
-    >
-      <template v-slot:append>
-          <v-btn
-            class="text-none"
-            color="primary"
-            icon="mdi-pencil"
-            variant="text"
-            slim
-          ></v-btn>
-          <v-btn
-            class="text-none"
-            color="primary"
-            icon="mdi-delete"
-            variant="text"
-            slim
-          ></v-btn>
-      </template>
-
-      <v-divider class="border-opacity-100" thickness="2" ></v-divider>
-
-      <v-card-text class="text-medium-emphasis pa-6">
-        <div class="text-h6 mb-6 m-0 p-0">Descrição</div>
-        <div>Descrição vai aqui</div>
-      </v-card-text>
-    </v-card>
-  </div>
+    <div class="board-region">
+        <div class="flex items-center">
+            <h2 class="board-title mr-4">{{ board.name }}</h2>
+            <v-btn style="border-width: 2px;" icon="$plus" size="small"></v-btn>
+        </div>
+        <div class="flex gap-2 overflow-x-scroll pb-4">
+            <template v-for="(lista, index) in listaResponse" :key="index">
+                <ListComponent :lista="lista" />
+            </template>
+        </div>
+    </div>
 </template>
 
-<style scoped>
-  .board-container{
-    width: 20rem;
-    margin: 5px;
-  }
-  .board-component {
-    border-width: 2px;
-  }
-</style>
