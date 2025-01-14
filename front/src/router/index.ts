@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import BoardView from '@/views/MyBoardsView.vue'
 import LoginView from '@/views/LoginView.vue'
 import SignUpView from '@/views/SignUpView.vue'
+import {useAuth} from "@/stores/auth.ts";
+import BoardComponent from "@/components/BoardComponent.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,7 +37,7 @@ const router = createRouter({
     {
       path: '/quadros',
       name: 'quadros',
-      component: BoardView,
+      component: BoardComponent,
       meta: {
         auth: true,
       },
