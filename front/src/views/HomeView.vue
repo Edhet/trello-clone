@@ -6,6 +6,7 @@ import CollectionComponent from "@/components/CollectionComponent.vue";
 import MyBoardsComponent from "@/components/MyBoardsComponent.vue";
 import ListComponent from "@/components/ListComponent.vue";
 import CardComponent from "@/components/CardComponent.vue";
+import NavBarComponent from "@/components/NavBarComponent.vue";
 
 //-------------------------
 //fetch das coleções do usuario
@@ -103,7 +104,7 @@ const card = {
 </script>
 
 <template>
-
+<NavBarComponent username="JoaozinhoTeste"/>
 <!-- MINHAS COLEÇÕES-->
   <template>
     <div class="board-region ">
