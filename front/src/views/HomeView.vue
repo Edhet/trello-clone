@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import NavBarComponent from "@/components/NavBarComponent.vue";
 import type {IBoard} from "@/models/IBoard.ts";
 import BoardComponent from "@/components/BoardComponent.vue";
 import type {IList} from "@/models/IList.ts";
+import CollectionComponent from "@/components/CollectionComponent.vue";
+import MyBoardsComponent from "@/components/MyBoardsComponent.vue";
+import ListComponent from "@/components/ListComponent.vue";
+import CardComponent from "@/components/CardComponent.vue";
 
 //-------------------------
 //fetch das coleções do usuario
@@ -22,6 +25,12 @@ const collections = [
 //-------------------------
 //fazer um fetch dos quadros do usuario
 
+//mock de um quadro
+const board =  {
+      name: 'Quadro de Desenvolvimento Web',
+      id: 194382561,
+      description: 'Quadro para organizar tarefas relacionadas ao desenvolvimento de sites e aplicativos web.'
+    };
 //mock de quadros do usuario
 const boards: IBoard[] = [
     {
@@ -50,13 +59,6 @@ const boards: IBoard[] = [
         description: 'Quadro voltado para a gestão de processos de recrutamento e seleção de novos colaboradores.'
     }
 ]
-
-//mock de um quadro só
-const board: IBoard =  {
-        name: 'Quadro de Desenvolvimento Web',
-        id: 194382561,
-        description: 'Quadro para organizar tarefas relacionadas ao desenvolvimento de sites e aplicativos web.'
-    };
 
 //-------------------------
 //fetch de listas
@@ -101,5 +103,31 @@ const card = {
 </script>
 
 <template>
-  <h1>Teste</h1>
+
+<!-- MINHAS COLEÇÕES-->
+  <template>
+    <div class="board-region ">
+      <div class="flex items-center">
+        <h2 class="board-title mr-4">Minhas Coleções</h2>
+        <v-btn style="border-width: 2px;" icon="$plus" size="small"></v-btn>
+      </div>
+      <div class="flex gap-2 overflow-x-scroll pb-4">
+        <template v-for="colection in collections">
+        <CollectionComponent :collection="colection"/>
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <!--  MEUS QUADROS-->
+  <MyBoardsComponent :boards="boards"/>
+
+  <!--  UM QUADROS-->
+  <BoardComponent :board="board"/>
+
+  <!--  UMA LISTA-->
+  <ListComponent :lista="tarefasDeTrabalho"/>
+  <!--  UM CARD-->
+  <CardComponent :card="card"/>
+
 </template>
