@@ -1,50 +1,36 @@
 <script setup lang="ts">
 import InputComponent from "@/components/InputComponent.vue"
 import ButtonComponent from "@/components/ButtonComponent.vue"
-import type {ILogin} from "@/models/ILogin.ts";
-import { ref } from 'vue';
+import type { ILogin } from "@/models/ILogin.ts";
 import { useAuth } from '@/stores/auth';
-import type LoginRegisterModel from '@/models/LoginRegisterModel';
 import requestService from '@/services/requestService';
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 const auth = useAuth();
 const router = useRouter();
-const route = useRoute();
 
+async function userLogin() {
 
-  async function userLogin(e: SubmitEvent) {
-    e.preventDefault();
-    try {
-      const { data } = await requestService.post('/user/login', form.value)
-      auth.setToken(data.jwt)
-      const redirectPath = route.query.redirect || '/';
-      router.push(redirectPath as string);
-    } catch (error) {
-      console.log(error)
-    }
-    const form = document.querySelector('#loginForm') as HTMLFormElement
-    const formdata = new FormData(form)
+  const form = document.querySelector('#loginForm') as HTMLFormElement
+  const formdata = new FormData(form)
 
-    const data : ILogin = {
-      email: formdata.get('email') as string,
-      password: formdata.get('password') as string,
-    }
-    if(!data.email.trim() || !data.password.trim() ) {
-      alert("Todos os campos são obrigatórios!");
-      return;
-    }
-    console.log(data)
-
-    const response = await fetch('http://localhost:8080/user/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
-    const dadosServidor = await response.json()
-
-    console.log('resposta da api', dadosServidor)
+  const dataLogin: ILogin = {
+    email: formdata.get('email') as string,
+    password: formdata.get('password') as string,
   }
+  if (!dataLogin.email.trim() || !dataLogin.password.trim()) {
+    alert("Todos os campos são obrigatórios!");
+    return;
+  }
+
+  try {
+    const response = await requestService.post('/user/login', formdata)
+    auth.setToken(response.data.jwt)
+    router.push('/home');
+  } catch (error) {
+    console.log(error)
+  }
+}
 </script>
 
 <template>
@@ -63,10 +49,10 @@ const route = useRoute();
     </div>
 
     <form id="loginForm" class=" h-[100%] bg-[#F3F5F6] w-[40%] p-10 flex flex-col gap-3 justify-center">
-      <InputComponent name="email" label="Email" placeholder="meu@gmail.com"/>
-      <InputComponent name="password"  label="Senha" placeholder="******"/>
+      <InputComponent name="email" label="Email" placeholder="meu@gmail.com" type="email"/>
+      <InputComponent name="password" label="Senha" placeholder="******" type="password"/>
       <RouterLink to="/" class="font-weight-bold text-decoration-underline">Esqueci minha senha</RouterLink>
-      <ButtonComponent :buttonFunction ="userLogin" id="botao" texto="Enviar!" textcolor="blue-300" bgcolor="gray-500"/>
+      <ButtonComponent :buttonFunction="userLogin" id="botao" texto="Enviar!" textcolor="blue-300" bgcolor="gray-500" type="button"/>
 
       <div class="flex flex-col align-center gap-4">
         <p>Não possui conta?</p>

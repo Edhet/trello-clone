@@ -1,37 +1,30 @@
 <script setup lang="ts">
 import InputComponent from "@/components/InputComponent.vue"
 import ButtonComponent from "@/components/ButtonComponent.vue"
-import type {ISingUp} from "@/models/ISingUp.ts";
-import { ref } from 'vue';
-import type LoginRegisterModel from '@/models/LoginRegisterModel';
+import type { ISingUp } from "@/models/ISingUp.ts"
 import requestService from '@/services/requestService'
+import { useRouter } from 'vue-router'
 
+const router = useRouter();
 
-async function registerUser(e: SubmitEvent) {
-  e.preventDefault()
+async function registerUser() {
   const form = document.querySelector('#loginForm') as HTMLFormElement
   const formdata = new FormData(form)
 
-  const data :ISingUp = {
-    name: formdata.get('name') as string,
+  const formField: ISingUp = {
+    name: formdata.get('username') as string,
     email: formdata.get('email') as string,
     password: formdata.get('password') as string,
     passwordConfirmation: formdata.get('passwordConfirmation') as string
   }
-  if(!data.email.trim() || !data.name.trim() || !data.password.trim() || !data.passwordConfirmation.trim()) {
+  if (!formField.email.trim() || !formField.name.trim() || !formField.password.trim() || !formField.passwordConfirmation.trim()) {
     alert("Todos os campos são obrigatórios!");
     return;
   }
-  console.log(data)
 
-  const response = await fetch('http://localhost:8080/user/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  })
-  const dadosServidor = await response.json()
+  await requestService.post('/user/register', formdata)
+  router.push("/login");
 
-  console.log('resposta da api', dadosServidor)
 }
 </script>
 
@@ -51,11 +44,12 @@ async function registerUser(e: SubmitEvent) {
     </div>
 
     <form id="loginForm" class=" h-[100%] bg-[#F3F5F6] w-[40%] p-10 flex flex-col gap-3 justify-center">
-      <InputComponent name="name" label="Nome" placeholder="meunome"/>
-      <InputComponent name="email" label="Email" placeholder="meu@gmail.com"/>
-      <InputComponent name="password"  label="Senha" placeholder="******"/>
-      <InputComponent name="passwordConfirmation"  label="Confirme a Senha" placeholder="******"/>
-      <ButtonComponent :buttonFunction ="registerUser" id="botao" texto="Cadastrar" textcolor="blue-300" bgcolor="gray-500"/>
+      <InputComponent name="username" label="Nome" placeholder="meunome" type="text" />
+      <InputComponent name="email" label="Email" placeholder="meu@gmail.com" type="email" />
+      <InputComponent name="password" label="Senha" placeholder="******" type="password" />
+      <InputComponent name="passwordConfirmation" label="Confirme a Senha" placeholder="******" type="password" />
+      <ButtonComponent :buttonFunction="registerUser" id="botao" texto="Cadastrar" textcolor="blue-300"
+        bgcolor="gray-500" type="button" />
 
       <div class="flex flex-col align-center gap-4">
         <p>Já possui conta?</p>
@@ -66,4 +60,3 @@ async function registerUser(e: SubmitEvent) {
 
   </div>
 </template>
-
