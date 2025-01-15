@@ -36,7 +36,7 @@ app.use(vuetify)
 
 app.component('CardComponent', CardComponent)
 app.component('BoardComponent', BoardComponent)
-app.component('MyBoardsComponent', BoardComponent)
+app.component('MyBoardsComponent', MyBoardsComponent)
 app.component('ListComponent', ListComponent)
 app.component('CollectionComponent', CollectionComponent)
 
