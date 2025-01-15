@@ -5,11 +5,15 @@ import type { ILogin } from "@/models/ILogin.ts";
 import { useAuth } from '@/stores/auth';
 import requestService from '@/services/requestService';
 import { useRouter } from 'vue-router';
+import {ref} from 'vue'
 
 const auth = useAuth();
 const router = useRouter();
+const errorMessage = ref('');
 
 async function userLogin() {
+
+  errorMessage.value = '';
 
   const form = document.querySelector('#loginForm') as HTMLFormElement
   const formdata = new FormData(form)
@@ -28,7 +32,11 @@ async function userLogin() {
     auth.setToken(response.data.jwt)
     router.push('/home');
   } catch (error) {
-    console.log(error)
+    if (error.response.status === 400 || error.response.status === 404) {
+        errorMessage.value = 'Email ou senha inválidos.';
+      } else {
+        errorMessage.value = 'Ocorreu um erro ao tentar realizar o login. Tente novamente.';
+      }
   }
 }
 </script>
@@ -53,7 +61,7 @@ async function userLogin() {
       <InputComponent name="password" label="Senha" placeholder="******" type="password"/>
       <RouterLink to="/" class="font-weight-bold text-decoration-underline">Esqueci minha senha</RouterLink>
       <ButtonComponent :buttonFunction="userLogin" id="botao" texto="Enviar!" textcolor="blue-300" bgcolor="gray-500" type="button"/>
-
+      <p v-if="errorMessage" >{{ errorMessage }}</p>
       <div class="flex flex-col align-center gap-4">
         <p>Não possui conta?</p>
         <RouterLink class="p-3 bg-gray-300 rounded-md border-solid" to="/cadastro">Cadastre-se</RouterLink>

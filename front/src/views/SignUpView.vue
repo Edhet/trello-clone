@@ -48,8 +48,7 @@ async function registerUser() {
       <InputComponent name="email" label="Email" placeholder="meu@gmail.com" type="email" />
       <InputComponent name="password" label="Senha" placeholder="******" type="password" />
       <InputComponent name="passwordConfirmation" label="Confirme a Senha" placeholder="******" type="password" />
-      <ButtonComponent :buttonFunction="registerUser" id="botao" texto="Cadastrar" textcolor="blue-300"
-        bgcolor="gray-500" type="button" />
+      <ButtonComponent :buttonFunction="registerUser" id="botao" texto="Cadastrar" type="button" />
 
       <div class="flex flex-col align-center gap-4">
         <p>Já possui conta?</p>
