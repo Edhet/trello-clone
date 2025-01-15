@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import ButtonComponent from "@/components/ButtonComponent.vue";
+import { useAuth } from "@/stores/auth";
+import { useRouter } from 'vue-router'
+
+const auth = useAuth();
+const router = useRouter();
+
 function sair() {
-  console.log("Sair")
+  auth.logOut();
+  router.push('/login')
 }
 defineProps<{ username: string }>()
 </script>
@@ -11,7 +18,7 @@ defineProps<{ username: string }>()
     <h2> Home </h2>
     <div>
       <p>{{ username }}</p>
-      <ButtonComponent texto="Sair" :button-function=sair />
+      <ButtonComponent texto="Sair" :button-function="sair" />
     </div>
   </div>
   <v-divider class="border-opacity-100 mt-4" thickness="2"></v-divider>
