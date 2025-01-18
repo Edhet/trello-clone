@@ -17,13 +17,23 @@ async function registerUser() {
     password: formdata.get('password') as string,
     passwordConfirmation: formdata.get('passwordConfirmation') as string
   }
+  
   if (!formField.email.trim() || !formField.name.trim() || !formField.password.trim() || !formField.passwordConfirmation.trim()) {
     alert("Todos os campos são obrigatórios!");
     return;
   }
+  if (formField.password != formField.passwordConfirmation) {
+    alert("As senhas são diferentes");
+    return;
+  }
 
-  await requestService.post('/user/register', formdata)
-  router.push("/login");
+  try {
+    await requestService.post('/user/register', formdata)
+    router.push("/login")
+    alert("Conta criada com sucesso")
+  } catch (error) {
+    alert(error.response.data.error)
+  }
 
 }
 </script>
