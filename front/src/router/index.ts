@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import SignUpView from '@/views/SignUpView.vue'
-import {useAuth} from "@/stores/auth.ts";
-import BoardComponent from "@/components/BoardComponent.vue";
+import { useAuth } from '@/stores/auth.ts'
+import BoardComponent from '@/components/BoardComponent.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,16 +23,16 @@ const router = createRouter({
     },
     {
       path: '/',
-      redirect: { path: "/login" },
+      redirect: { path: '/login' },
       name: '/',
       component: LoginView,
-        children: [
-            {
-                path: "/login",
-                name: "login",
-                component: LoginView,
-            },
-        ],
+      children: [
+        {
+          path: '/login',
+          name: 'login',
+          component: LoginView,
+        },
+      ],
     },
     {
       path: '/quadros',
@@ -46,23 +46,16 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  if (to.meta?.auth) {
-    const auth = useAuth();
+  if (!to.meta?.auth) next()
 
-    if (auth.token) {
-      const authenticatedEmail: string = await auth.checkToken();
-      if (authenticatedEmail) {
-        next();
-      } else {
-        next({ name: 'login', query: { redirect: to.fullPath } });
-      }
-    } else {
-      next({ name: 'login', query: { redirect: to.fullPath } });
-    }
+  const auth = useAuth()
+  const authenticatedEmail: string | undefined = await auth.checkToken()
+
+  if (auth.token && authenticatedEmail) {
+    next()
   } else {
-    next();
+    next({ name: 'login' })
   }
-});
-
+})
 
 export default router

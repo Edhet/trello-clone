@@ -10,18 +10,16 @@ export const useAuth = defineStore('auth', () => {
     token.value = tokenValue
   }
 
+  function getToken() {
+    return token.value
+  }
+
   async function checkToken() {
-    try {
-      const tokenAuth = 'Bearer ' + token.value
-      const { data } = await requestService.get('user/auth/', {
-        headers: {
-          Authorization: tokenAuth,
-        },
-      })
-      return data
-    } catch (error) {
+    const res = await requestService.get<{ email: string }>('user/auth/');
+    if (res.error) {
       return
     }
+    return res.result?.email
   }
 
   function logOut() {
@@ -31,6 +29,7 @@ export const useAuth = defineStore('auth', () => {
 
   return {
     token,
+    getToken,
     setToken,
     checkToken,
     logOut,
