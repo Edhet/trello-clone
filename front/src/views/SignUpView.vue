@@ -4,6 +4,7 @@ import ButtonComponent from "@/components/ButtonComponent.vue"
 import type { ISingUp } from "@/models/ISingUp.ts"
 import requestService from '@/services/requestService'
 import { useRouter } from 'vue-router'
+import alertService from "@/services/alertService"
 
 const router = useRouter();
 
@@ -17,22 +18,22 @@ async function registerUser() {
     password: formdata.get('password') as string,
     passwordConfirmation: formdata.get('passwordConfirmation') as string
   }
-  
+
   if (!formField.email.trim() || !formField.name.trim() || !formField.password.trim() || !formField.passwordConfirmation.trim()) {
-    alert("Todos os campos são obrigatórios!");
-    return;
+    alertService.showError("Todos os campos são obrigatórios!")
+    return
   }
   if (formField.password != formField.passwordConfirmation) {
-    alert("As senhas são diferentes");
-    return;
+    alertService.showError("As senhas são diferentes")
+    return
   }
 
   try {
     await requestService.post('/user/register', formdata)
     router.push("/login")
-    alert("Conta criada com sucesso")
+    alertService.showSuccess("Conta criada com sucesso")
   } catch (error) {
-    alert(error.response.data.error)
+    alertService.showError(error.response.data.error)
   }
 
 }
@@ -60,12 +61,11 @@ async function registerUser() {
       <InputComponent name="passwordConfirmation" label="Confirme a Senha" placeholder="******" type="password" />
       <ButtonComponent :buttonFunction="registerUser" id="botao" texto="Cadastrar" type="button" />
 
-      <div class="flex flex-col align-center gap-4">
+      <div class="flex align-center gap-2 mt-4">
         <p>Já possui conta?</p>
-        <RouterLink class="p-3 bg-gray-300 rounded-md border-solid" to="/login">Entrar</RouterLink>
+        <RouterLink class="underline" to="/login">Entrar</RouterLink>
       </div>
 
     </form>
-
   </div>
 </template>
