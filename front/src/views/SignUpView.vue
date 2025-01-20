@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import InputComponent from '@/components/InputComponent.vue'
 import type { SignUpModel } from '@/models/sign-up.model.ts'
 import requestService from '@/services/request.service.ts'
 import { useRouter } from 'vue-router'
@@ -61,18 +60,26 @@ async function registerUser() {
       id="loginForm"
       class="h-[100%] bg-[#F3F5F6] w-[40%] p-10 flex flex-col gap-3 justify-center"
     >
-      <InputComponent name="username" label="Nome" placeholder="meunome" type="text" />
-      <InputComponent name="email" label="Email" placeholder="meu@gmail.com" type="email" />
-      <InputComponent name="password" label="Senha" placeholder="******" type="password" />
-      <InputComponent
-        name="passwordConfirmation"
-        label="Confirme a Senha"
-        placeholder="******"
-        type="password"
-      />
-      <v-btn color="primary" type="submit">
-        Criar conta
-      </v-btn>
+      <div>
+        <v-text-field name="username" label="Nome" placeholder="meunome" type="text"></v-text-field>
+        <v-text-field
+          name="email"
+          label="Email"
+          placeholder="meu@gmail.com"
+          type="email"
+        ></v-text-field>
+        <v-text-field
+          name="password"
+          label="Senha"
+          type="password"
+        ></v-text-field>
+        <v-text-field
+          name="passwordConfirmation"
+          label="Confirme a Senha"
+          type="password"
+        ></v-text-field>
+      </div>
+      <v-btn color="primary" type="submit"> Criar conta</v-btn>
       <div class="flex align-center gap-2 mt-4">
         <p>Já possui conta?</p>
         <RouterLink class="underline" to="/login">Entrar</RouterLink>

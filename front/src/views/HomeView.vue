@@ -15,5 +15,5 @@ onMounted(async () => {
 
 <template>
   <NavBarComponent :username="userInfo.userInfoRef?.username" />
-  <MyBoardsComponent/>
+  <MyBoardsComponent />
 </template>

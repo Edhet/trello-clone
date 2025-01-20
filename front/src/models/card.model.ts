@@ -1,7 +1,7 @@
 export interface CardModel {
-  id: string
+  _id: string
   priority: number
-  description: string
+  content: string
   createdAt: string
   updatedAt: string
 }

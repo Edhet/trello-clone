@@ -14,10 +14,9 @@ import '@mdi/font/css/materialdesignicons.css'
 
 // Components
 import CardComponent from './components/CardComponent.vue'
-import BoardComponent from './components/BoardComponent.vue'
 import MyBoardsComponent from './components/MyBoardsComponent.vue'
 import ListComponent from './components/ListComponent.vue'
-import CollectionComponent from './components/CollectionComponent.vue'
+import NavBarComponent from '@/components/NavBarComponent.vue'
 
 const vuetify = createVuetify({
   components,
@@ -35,9 +34,8 @@ app.use(pinia)
 app.use(vuetify)
 
 app.component('CardComponent', CardComponent)
-app.component('BoardComponent', BoardComponent)
 app.component('MyBoardsComponent', MyBoardsComponent)
 app.component('ListComponent', ListComponent)
-app.component('CollectionComponent', CollectionComponent)
+app.component('NavBarComponent', NavBarComponent)
 
 app.mount('#app')

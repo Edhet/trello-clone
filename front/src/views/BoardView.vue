@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { boardsStore } from '@/stores/boards.store.ts'
 import type { BoardAccessModel } from '@/models/board-access.model.ts'
 import alertService from '@/services/alert.service.ts'
 import { useRouter } from 'vue-router'
 import ListComponent from '@/components/ListComponent.vue'
 import { AccessType } from '@/models/access-type.enum.ts'
+import requestService from '@/services/request.service.ts'
+import type { ListModel } from '@/models/list.model.ts'
 
 const props = defineProps<{ id: string }>()
 const router = useRouter()
@@ -14,7 +16,13 @@ const boardStore = boardsStore()
 const loading = ref(true)
 const editing = ref(false)
 
+const newListName = ref('')
+
 let board: BoardAccessModel
+
+const listasOrdenadas = computed(() => {
+  return board.board.lists.sort((a, b) => a.order - b.order)
+})
 
 onMounted(async () => {
   loading.value = true
@@ -32,7 +40,43 @@ function back() {
   router.push('/')
 }
 
-function editar() {}
+async function editar() {
+  if (
+    !board.board.backgroundColor.trim() ||
+    !board.board.textColor.trim() ||
+    !board.board.title.trim()
+  ) {
+    alertService.showError('Todos os valores são obrigatórios')
+    return
+  }
+
+  const res = await requestService.put<void>(`/boards/edit?id=${board.board._id}`, board.board)
+  if (res.error) {
+    alertService.showError(res.error!.error)
+    return
+  }
+  alertService.showSuccess('Quadro alterado com sucesso')
+  editing.value = false
+}
+
+async function criarLista() {
+  if (!newListName.value.trim()) {
+    alertService.showError('Nome para lista é obrigatório')
+    return
+  }
+
+  const res = await requestService.post<ListModel>(`/lists/new?board-id=${board.board._id}`, {
+    title: newListName.value,
+  })
+  if (res.error || !res.result) {
+    alertService.showError(res.error!.error)
+    return
+  }
+
+  board.board.lists.push(res.result)
+  newListName.value = ''
+  alertService.showSuccess('Quadro alterado com sucesso')
+}
 </script>
 
 <template>
@@ -86,10 +130,24 @@ function editar() {}
           <v-btn class="mt-12" block color="primary" type="submit">Alterar</v-btn>
         </v-form>
       </div>
-      <div class="flex overflow-x-auto h-full">
-        <template v-for="list in board.board.lists" :key="list._id">
-          <list-component :lista="list" :bg-color="board.board.backgroundColor" :text-color="board.board.textColor"></list-component>
-        </template>
+
+      <v-divider></v-divider>
+
+      <div>
+        <v-row class="mt-12">
+          <v-text-field label="Nome da lista" v-model="newListName"></v-text-field>
+          <v-btn @click="criarLista()" icon="mdi-plus"></v-btn>
+        </v-row>
+        <div class="flex overflow-x-auto gap-6 h-full">
+          <template v-for="list in listasOrdenadas" :key="list._id">
+            <list-component
+              :lista="list"
+              :board="board"
+              :bg-color="board.board.backgroundColor"
+              :text-color="board.board.textColor"
+            ></list-component>
+          </template>
+        </div>
       </div>
     </div>
   </v-container>
