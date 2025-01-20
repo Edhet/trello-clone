@@ -14,9 +14,9 @@ function sair() {
 </script>
 <template>
   <div class="flex gap-3 items-center justify-between mx-auto max-w-[1024px] pt-4">
-    <h1>TaskFlow</h1>
+    <RouterLink to="/home"><h1>TaskFlow</h1></RouterLink>
     <div class="flex gap-3 items-center justify-between">
-      <p class="font-bold">{{ username ?? '-' }}</p>
+      <RouterLink class="underline" to="/profile"><p class="font-bold">{{ username ?? '-' }}</p></RouterLink>
       <v-btn @click="sair()" color="primary">Sair</v-btn>
     </div>
   </div>

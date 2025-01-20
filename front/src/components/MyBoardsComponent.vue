@@ -4,6 +4,7 @@ import requestService from '@/services/request.service.ts'
 import alertService from '@/services/alert.service.ts'
 import { boardsStore } from '@/stores/boards.store.ts'
 import router from '@/router'
+import BoardComponent from './BoardComponent.vue'
 
 const boards = boardsStore()
 
@@ -50,30 +51,12 @@ function boardScreen(board: BoardAccessModel) {
         <p>Vocẽ não possui quadros</p>
       </template>
       <template v-for="board in boards.get()" :key="board._id">
-        <v-card :color="board.board.backgroundColor">
-          <v-card-title>{{ board.board.title }}</v-card-title>
-          <v-card-text>
-            <v-chip color="white">{{ `${board.board.lists.length} Listas` }}</v-chip>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn @click="boardScreen(board)">Visualizar</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn
-              @click="favoriteBoard(board)"
-              :color="board.favorite ? 'yellow' : 'white'"
-              icon="mdi-star"
-              variant="text"
-              slim
-            ></v-btn>
-            <v-btn
-              @click="deleteBoard(board)"
-              color="white"
-              icon="mdi-delete"
-              variant="text"
-              slim
-            ></v-btn>
-          </v-card-actions>
-        </v-card>
+        <BoardComponent
+          :board="board"
+          @delete="deleteBoard"
+          @favorite="favoriteBoard"
+          @view="boardScreen"
+        />
       </template>
     </div>
   </v-container>

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { ICollection } from '@/models/ICollection.ts'
-
 defineProps<{ collection: ICollection }>()
 </script>
 

@@ -8,7 +8,7 @@ import alertService from '@/services/alert.service.ts'
 const router = useRouter()
 
 async function registerUser() {
-  const form = document.querySelector('#loginForm') as HTMLFormElement
+  const form = document.querySelector('#registerForm') as HTMLFormElement
   const formdata = new FormData(form)
 
   const formField: SignUpModel = {
@@ -58,7 +58,7 @@ async function registerUser() {
 
     <form
       @submit.prevent="registerUser"
-      id="loginForm"
+      id="registerForm"
       class="h-[100%] bg-[#F3F5F6] w-[40%] p-10 flex flex-col gap-3 justify-center"
     >
       <InputComponent name="username" label="Nome" placeholder="meunome" type="text" />

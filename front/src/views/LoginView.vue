@@ -32,7 +32,7 @@ async function userLogin() {
     return
   }
 
-  auth.setToken(response.result?.jwt)
+  auth.setToken(response.result!.jwt)
   router.push('/home')
 }
 </script>

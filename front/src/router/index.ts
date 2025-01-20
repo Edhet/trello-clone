@@ -5,6 +5,7 @@ import SignUpView from '@/views/SignUpView.vue'
 import { useAuth } from '@/stores/auth.store.ts'
 import NewBoardView from '@/views/NewBoardView.vue'
 import BoardView from '@/views/BoardView.vue'
+import ProfileView from '@/views/ProfileView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,14 @@ const router = createRouter({
       meta: {
         auth: true,
       },
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: ProfileView,
+      meta: {
+        auth: true
+      }
     },
     {
       path: '/quadro/:id',

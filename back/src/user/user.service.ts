@@ -72,7 +72,7 @@ export class UserService {
 
     async changePwd(newPwd: string, email: string) {
         logger.trace(`Started changing password`)
-        if (!newPwd) throw new BadRequestError("Senha sem vazia")
+        if (!newPwd) throw new BadRequestError("Senha vazia")
 
         const user = await this.getUser(email)
 
