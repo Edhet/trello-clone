@@ -1,5 +1,5 @@
 export interface ErrorModel {
-  status: number;
-  error: string;
-  timestamp: Date;
+  status: number
+  error: string
+  timestamp: Date
 }

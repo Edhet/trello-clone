@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import InputComponent from '@/components/InputComponent.vue'
 import type { LoginModel } from '@/models/login.model.ts'
 import { useAuth } from '@/stores/auth.store.ts'
 import requestService from '@/services/request.service.ts'
@@ -53,21 +52,30 @@ async function userLogin() {
 
     <form
       id="loginForm"
-      class="h-[100%] bg-[#F3F5F6] w-[40%] p-10 flex flex-col gap-3 justify-center"
+      class="h-full bg-[#F3F5F6] w-[40%] p-10 flex flex-col gap-3 justify-center"
       @submit.prevent="userLogin"
     >
-      <InputComponent name="email" label="Email" placeholder="meu@gmail.com" type="email" />
-      <InputComponent name="password" label="Senha" placeholder="******" type="password" />
-      <v-btn color="primary" type="submit">
-        Entrar
-      </v-btn>
+      <div>
+        <v-text-field
+          name="email"
+          label="Email"
+          placeholder="email@dominio.com"
+          type="email"
+        ></v-text-field>
+        <v-text-field
+          name="password"
+          label="Senha"
+          type="password"
+        ></v-text-field>
+      </div>
+      <v-btn color="primary" type="submit"> Entrar</v-btn>
       <div class="flex align-center gap-2 mt-4">
         <p>Não possui conta?</p>
         <RouterLink class="underline" to="/cadastro">Cadastre-se</RouterLink>
       </div>
       <RouterLink to="/" class="font-weight-bold text-decoration-underline"
-        >Esqueci minha senha</RouterLink
-      >
+        >Esqueci minha senha
+      </RouterLink>
     </form>
   </div>
 </template>

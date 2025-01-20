@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import InputComponent from '@/components/InputComponent.vue'
+import { onMounted } from 'vue'
 import alertService from '@/services/alert.service.ts'
 import { useRouter } from 'vue-router'
 import NavBarComponent from '@/components/NavBarComponent.vue'
@@ -11,8 +10,6 @@ import { useAuth } from '@/stores/auth.store.ts'
 const auth = useAuth()
 const router = useRouter()
 const userInfo = userInfoStore()
-
-const loading = ref(true)
 
 onMounted(async () => {
   userInfo.fetch()
@@ -52,18 +49,17 @@ async function updateUser() {
 
 
 <template>
-    <NavBarComponent :username="userInfo.userInfoRef?.username" />
-   <form
-      @submit.prevent="updateUser"
-      id="updateUserForm"
-      class="h-[100%] bg-[#F3F5F6] w-[100%] p-10 flex flex-col gap-3 "
-    >
-      <InputComponent :disabled=true name="username" label="Nome" :placeholder=userInfo.userInfoRef!.username type="text" />
-      <InputComponent :disabled=true name="email" label="Email" :placeholder=userInfo.userInfoRef!.email type="email" />
-      <InputComponent name="newPassword" label="Nova senha" placeholder="******" type="password"/>
-      <InputComponent name="passwordConfirmation" label="Confirme a nova senha" placeholder="******" type="password"/>
-      <v-btn color="primary" type="submit">
-        Atualizar Conta
-      </v-btn>
-    </form>
+  <NavBarComponent :username="userInfo.userInfoRef?.username" />
+  <form @submit.prevent="updateUser" id="updateUserForm"
+    class="h-[100%] bg-[#F3F5F6] w-[100%] p-10 flex flex-col gap-3 ">
+    <div>
+      <v-text-field persistent-placeholder disabled name="username" label="Nome" :placeholder="userInfo.userInfoRef?.username" type="text"></v-text-field>
+      <v-text-field persistent-placeholder disabled name="email" label="Email" :placeholder="userInfo.userInfoRef?.email" type="email"></v-text-field>
+      <v-text-field name="newPassword" label="Senha" type="password"></v-text-field>
+      <v-text-field name="passwordConfirmation" label="Confirme a Senha" type="password"></v-text-field>
+    </div>
+    <v-btn color="primary" type="submit">
+      Atualizar Conta
+    </v-btn>
+  </form>
 </template>

@@ -20,7 +20,7 @@ const alertService = {
   },
 
   showError(message: string, duration?: number) {
-    this.addAlert({ type: 'error', message: message ? message : "Algo deu errado", duration })
+    this.addAlert({ type: 'error', message: message ? message : 'Algo deu errado', duration })
   },
 
   showSuccess(message: string, duration?: number) {

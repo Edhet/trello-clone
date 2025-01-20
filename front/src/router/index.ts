@@ -68,7 +68,7 @@ router.beforeEach(async (to, from, next) => {
   if (!to.meta || !to.meta.auth) next()
 
   const auth = useAuth()
-  if (auth.getToken() && await auth.checkToken()) {
+  if (auth.getToken() && (await auth.checkToken())) {
     next()
   } else {
     next({ path: '/login' })
