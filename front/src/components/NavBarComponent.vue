@@ -1,24 +1,23 @@
 <script setup lang="ts">
-import ButtonComponent from "@/components/ButtonComponent.vue";
-import { useAuth } from "@/stores/auth";
+import { useAuth } from '@/stores/auth.store.ts'
 import { useRouter } from 'vue-router'
 
-const auth = useAuth();
-const router = useRouter();
+defineProps<{ username?: string }>()
+
+const auth = useAuth()
+const router = useRouter()
 
 function sair() {
-  auth.logOut();
+  auth.logOut()
   router.push('/login')
 }
-defineProps<{ username: string }>()
 </script>
 <template>
-  <div class="flex gap-3 flex items-center justify-between mx-auto max-w-[1024px] pt-4">
-    <h1> TaskFlow</h1>
-    <h2> Home </h2>
-    <div>
-      <p>{{ username }}</p>
-      <ButtonComponent texto="Sair" :button-function="sair" />
+  <div class="flex gap-3 items-center justify-between mx-auto max-w-[1024px] pt-4">
+    <h1>TaskFlow</h1>
+    <div class="flex gap-3 items-center justify-between">
+      <p class="font-bold">{{ username ?? '-' }}</p>
+      <v-btn @click="sair()" color="primary">Sair</v-btn>
     </div>
   </div>
   <v-divider class="border-opacity-100 mt-4" thickness="2"></v-divider>

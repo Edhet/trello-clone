@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineProps<{
-  type: string,
+  type?: 'button' | 'submit' | 'reset',
   texto: string,
   buttonFunction: () => void
 }>()

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import AlertComponent from '@/components/AlertComponent.vue'
 </script>
 
@@ -8,6 +7,6 @@ import AlertComponent from '@/components/AlertComponent.vue'
     <v-main style="height: 100%">
       <RouterView />
     </v-main>
-  <AlertComponent></AlertComponent>
+    <AlertComponent></AlertComponent>
   </v-app>
 </template>

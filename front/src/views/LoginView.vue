@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import InputComponent from '@/components/InputComponent.vue'
-import ButtonComponent from '@/components/ButtonComponent.vue'
-import type { ILogin } from '@/models/ILogin.ts'
-import { useAuth } from '@/stores/auth'
-import requestService from '@/services/requestService'
+import type { LoginModel } from '@/models/login.model.ts'
+import { useAuth } from '@/stores/auth.store.ts'
+import requestService from '@/services/request.service.ts'
 import { useRouter } from 'vue-router'
-import alertService from '@/services/alertService.ts'
+import alertService from '@/services/alert.service.ts'
 
 const auth = useAuth()
 const router = useRouter()
@@ -14,7 +13,7 @@ async function userLogin() {
   const form = document.querySelector('#loginForm') as HTMLFormElement
   const formdata = new FormData(form)
 
-  const dataLogin: ILogin = {
+  const dataLogin: LoginModel = {
     email: formdata.get('email') as string,
     password: formdata.get('password') as string,
   }
@@ -33,7 +32,7 @@ async function userLogin() {
     return
   }
 
-  auth.setToken(response.result!.jwt)
+  auth.setToken(response.result?.jwt)
   router.push('/home')
 }
 </script>
@@ -55,17 +54,13 @@ async function userLogin() {
     <form
       id="loginForm"
       class="h-[100%] bg-[#F3F5F6] w-[40%] p-10 flex flex-col gap-3 justify-center"
+      @submit.prevent="userLogin"
     >
       <InputComponent name="email" label="Email" placeholder="meu@gmail.com" type="email" />
       <InputComponent name="password" label="Senha" placeholder="******" type="password" />
-      <ButtonComponent
-        :buttonFunction="userLogin"
-        id="botao"
-        texto="Entrar!"
-        textcolor="blue-300"
-        bgcolor="gray-500"
-        type="button"
-      />
+      <v-btn color="primary" type="submit">
+        Entrar
+      </v-btn>
       <div class="flex align-center gap-2 mt-4">
         <p>Não possui conta?</p>
         <RouterLink class="underline" to="/cadastro">Cadastre-se</RouterLink>

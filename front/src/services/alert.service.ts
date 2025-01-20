@@ -2,7 +2,7 @@ import { reactive } from 'vue'
 
 export interface IAlert {
   type: 'error' | 'success' | 'info'
-  message: string,
+  message: string
   duration?: number
 }
 
@@ -20,15 +20,15 @@ const alertService = {
   },
 
   showError(message: string, duration?: number) {
-    this.addAlert({ type:'error' , message, duration })
+    this.addAlert({ type: 'error', message: message ? message : "Algo deu errado", duration })
   },
 
   showSuccess(message: string, duration?: number) {
-    this.addAlert({ type:'success' , message, duration })
+    this.addAlert({ type: 'success', message, duration })
   },
 
   showInfo(message: string, duration?: number) {
-    this.addAlert({ type:'info' , message, duration })
+    this.addAlert({ type: 'info', message, duration })
   },
 
   removeAlert() {
@@ -36,8 +36,8 @@ const alertService = {
   },
 
   getAlerts() {
-    return alertState.alert;
-  }
+    return alertState.alert
+  },
 }
 
 export default alertService

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type {ICollection} from "@/models/ICollection.ts";
-  defineProps<{collection: ICollection}>()
+import type { ICollection } from '@/models/ICollection.ts'
+
+defineProps<{ collection: ICollection }>()
 </script>
 
 <template>
@@ -15,11 +16,11 @@ import type {ICollection} from "@/models/ICollection.ts";
 </template>
 
 <style scoped>
-  .collection-container{
-    width: 25rem;
-    margin: 5px;
-  }
-  .collection-component{
-    border-width: 2px;
-  }
+.collection-container {
+  width: 25rem;
+  margin: 5px;
+}
+.collection-component {
+  border-width: 2px;
+}
 </style>

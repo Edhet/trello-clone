@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import requestService from '@/services/requestService'
+import requestService from '@/services/request.service.ts'
 
 export const useAuth = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token'))
@@ -15,20 +15,19 @@ export const useAuth = defineStore('auth', () => {
   }
 
   async function checkToken() {
-    const res = await requestService.get<{ email: string }>('user/auth/');
+    const res = await requestService.get<{ email: string }>('user/auth/')
     if (res.error) {
       return
     }
-    return res.result?.email
+    return res.result!.email
   }
 
   function logOut() {
     localStorage.removeItem('token')
-    token.value = null;
+    token.value = null
   }
 
   return {
-    token,
     getToken,
     setToken,
     checkToken,

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { ICard } from "@/models/ICard.ts";
-defineProps<{ card: ICard }>()
+import type { CardModel } from '@/models/card.model.ts'
+
+defineProps<{ card: CardModel }>()
 </script>
 
 <template>
