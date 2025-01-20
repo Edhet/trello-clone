@@ -17,6 +17,7 @@ const loading = ref(true)
 const editing = ref(false)
 
 const newListName = ref('')
+const sharing = ref({ email: '', type: undefined })
 
 let board: BoardAccessModel
 
@@ -77,6 +78,20 @@ async function criarLista() {
   newListName.value = ''
   alertService.showSuccess('Quadro alterado com sucesso')
 }
+
+async function shareBoard() {
+  if (!sharing.value || !sharing.value.email.trim() || !sharing.value.type) {
+    alertService.showError('Todas as informações são obrigatórias')
+    return
+  }
+
+  const res = await requestService.post<void>("/boards/grant", { boardId: board.board._id, userEmail: sharing.value.email, accessType: sharing.value.type })
+  if (res.error) {
+    alertService.showError(res.error.error)
+    return
+  }
+  alertService.showSuccess("Quadro compartilhado com sucesso")
+}
 </script>
 
 <template>
@@ -103,7 +118,8 @@ async function criarLista() {
       </v-row>
 
       <div v-if="editing">
-        <v-form @submit.prevent="editar">
+        <v-form @submit.prevent="editar" :disabled="board.type == AccessType.READ_ONLY">
+          <h3 class="text-2xl mb-4">Alterar dados do quadro</h3>
           <v-text-field v-model="board.board.title" label="Título" required></v-text-field>
           <v-row no-gutters>
             <v-col cols="6">
@@ -127,20 +143,32 @@ async function criarLista() {
               ></v-color-picker>
             </v-col>
           </v-row>
-          <v-btn class="mt-12" block color="primary" type="submit">Alterar</v-btn>
+          <v-btn class="mt-6" block color="primary" type="submit">Alterar</v-btn>
+        </v-form>
+
+        <v-form @submit.prevent="shareBoard" :disabled="board.type == AccessType.READ_ONLY">
+          <h3 class="text-2xl mt-24 mb-4">Alterar permissões do quadro</h3>
+          <v-text-field v-model="sharing.email" required type="email" placeholder="amigo@email.com" label="Email"></v-text-field>
+          <v-select v-model="sharing.type" required
+            label="Tipo de acesso"
+            :items="[AccessType.READ_ONLY, AccessType.EDIT]"
+          ></v-select>
+          <v-btn class="mt-6" block color="primary" type="submit">Dar acesso</v-btn>
+
         </v-form>
       </div>
 
       <v-divider></v-divider>
 
-      <div>
+      <div v-if="!editing">
         <v-row class="mt-12">
-          <v-text-field label="Nome da lista" v-model="newListName"></v-text-field>
-          <v-btn @click="criarLista()" icon="mdi-plus"></v-btn>
+          <v-text-field label="Nome da lista" v-model="newListName" :disabled="board.type == AccessType.READ_ONLY"></v-text-field>
+          <v-btn @click="criarLista()" icon="mdi-plus" :disabled="board.type == AccessType.READ_ONLY"></v-btn>
         </v-row>
         <div class="flex overflow-x-auto gap-6 h-full">
           <template v-for="list in listasOrdenadas" :key="list._id">
             <list-component
+              :disabled="board.type == AccessType.READ_ONLY"
               :lista="list"
               :board="board"
               :bg-color="board.board.backgroundColor"

@@ -11,6 +11,7 @@ const props = defineProps<{
   board: BoardAccessModel
   bgColor: string
   textColor: string
+  disabled: boolean
 }>()
 
 const sortedList = computed(() => {
@@ -134,14 +135,15 @@ async function listDown() {
         <v-text-field v-else v-model="props.lista.title"></v-text-field>
       </template>
       <template v-slot:append>
-        <v-btn v-if="editing" icon="mdi-check" variant="text" slim @click="editList()"></v-btn>
-        <v-btn icon="mdi-pencil" variant="text" slim @click="editing = !editing"></v-btn>
-        <v-btn @click="deleteList()" icon="mdi-delete" variant="text" slim></v-btn>
+        <v-btn v-if="editing" :disabled="disabled" icon="mdi-check" variant="text" slim @click="editList()"></v-btn>
+        <v-btn icon="mdi-pencil" :disabled="disabled" variant="text" slim @click="editing = !editing"></v-btn>
+        <v-btn @click="deleteList()" :disabled="disabled" icon="mdi-delete" variant="text" slim></v-btn>
       </template>
       <v-divider class="border-opacity-100" thickness="2"></v-divider>
       <v-card-actions class="flex flex-col min-w-[300px]">
         <template v-for="(card, index) in sortedList" :key="index">
           <CardComponent
+            :disabled="disabled"
             :card="card"
             :lista="lista"
             :board-id="board.board._id"
@@ -149,14 +151,14 @@ async function listDown() {
           />
         </template>
         <v-card-actions class="w-full">
-          <v-text-field label="Conteúdo do card" v-model="newCardContent"></v-text-field>
-          <v-btn @click="criarCard()" icon="mdi-plus"></v-btn>
+          <v-text-field label="Conteúdo do card" v-model="newCardContent" :disabled="disabled"></v-text-field>
+          <v-btn @click="criarCard()" :disabled="disabled" icon="mdi-plus"></v-btn>
         </v-card-actions>
       </v-card-actions>
       <template v-slot:actions>
-        <v-btn @click="listUp()" icon="mdi-arrow-left" variant="text" slim></v-btn>
+        <v-btn @click="listUp()" :disabled="disabled" icon="mdi-arrow-left" variant="text" slim></v-btn>
         <v-spacer></v-spacer>
-        <v-btn @click="listDown()" icon="mdi-arrow-right" variant="text" slim></v-btn>
+        <v-btn @click="listDown()" :disabled="disabled" icon="mdi-arrow-right" variant="text" slim></v-btn>
       </template>
     </v-card>
   </div>

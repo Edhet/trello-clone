@@ -50,27 +50,29 @@ function boardScreen(board: BoardAccessModel) {
         <p>Vocẽ não possui quadros</p>
       </template>
       <template v-for="board in boards.get()" :key="board._id">
-        <v-card :color="board.board.backgroundColor">
+        <v-card v-ripple :color="board.board.backgroundColor" @click="boardScreen(board)">
           <v-card-title>{{ board.board.title }}</v-card-title>
           <v-card-text>
             <v-chip>{{ `${board.board.lists.length} Listas` }}</v-chip>
           </v-card-text>
           <v-card-actions>
-            <v-btn @click="boardScreen(board)">Visualizar</v-btn>
             <v-spacer></v-spacer>
-            <v-btn
-              @click="favoriteBoard(board)"
-              :color="board.favorite ? 'yellow' : ''"
-              icon="mdi-star"
-              variant="text"
-              slim
-            ></v-btn>
-            <v-btn
-              @click="deleteBoard(board)"
-              icon="mdi-delete"
-              variant="text"
-              slim
-            ></v-btn>
+            <div @click.stop>
+              <v-btn
+                @click="favoriteBoard(board)"
+                :color="board.favorite ? 'yellow' : ''"
+                icon="mdi-star"
+                variant="text"
+                slim
+              ></v-btn>
+              <v-btn
+                @click="deleteBoard(board)"
+                icon="mdi-delete"
+                variant="text"
+                slim
+              ></v-btn>
+            </div>
+
           </v-card-actions>
         </v-card>
       </template>

@@ -5,7 +5,13 @@ import type { ListModel } from '@/models/list.model.ts'
 import requestService from '@/services/request.service.ts'
 import alertService from '@/services/alert.service.ts'
 
-const props = defineProps<{ card: CardModel; lista: ListModel; boardId: string; color: string }>()
+const props = defineProps<{
+  card: CardModel
+  lista: ListModel
+  boardId: string
+  color: string
+  disabled: boolean
+}>()
 
 const editing = ref(false)
 
@@ -110,12 +116,12 @@ async function cardDown() {
     <v-card class="card-component flex min-w-[300px]" :color="color">
       <template v-slot:title>
         <v-card-title v-if="!editing">{{ card.content }}</v-card-title>
-        <v-textarea v-else v-model="card.content"></v-textarea>
+        <v-textarea :disabled="disabled" v-else v-model="card.content"></v-textarea>
       </template>
       <template v-slot:append>
-        <v-btn v-if="editing" icon="mdi-check" variant="text" slim @click="editCard()"></v-btn>
-        <v-btn icon="mdi-pencil" variant="text" slim @click="editing = !editing"></v-btn>
-        <v-btn icon="mdi-delete" variant="text" slim @click="deleteCard()"></v-btn>
+        <v-btn :disabled="disabled" v-if="editing" icon="mdi-check" variant="text" slim @click="editCard()"></v-btn>
+        <v-btn :disabled="disabled" icon="mdi-pencil" variant="text" slim @click="editing = !editing"></v-btn>
+        <v-btn :disabled="disabled" icon="mdi-delete" variant="text" slim @click="deleteCard()"></v-btn>
       </template>
       <v-divider class="border-opacity-100" thickness="2"></v-divider>
       <v-card-text>
@@ -123,9 +129,9 @@ async function cardDown() {
         <p class="text-sm">Ultima Modificação: {{ new Date(card.updatedAt).toLocaleString() }}</p>
       </v-card-text>
       <template v-slot:actions>
-        <v-btn icon="mdi-arrow-up" variant="text" slim @click="cardUp()"></v-btn>
+        <v-btn icon="mdi-arrow-up" :disabled="disabled" variant="text" slim @click="cardUp()"></v-btn>
         <v-spacer></v-spacer>
-        <v-btn icon="mdi-arrow-down" variant="text" slim @click="cardDown()"></v-btn>
+        <v-btn icon="mdi-arrow-down" :disabled="disabled" variant="text" slim @click="cardDown()"></v-btn>
       </template>
     </v-card>
   </div>
