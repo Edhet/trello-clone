@@ -6,6 +6,8 @@ import { useAuth } from '@/stores/auth.store.ts'
 import NewBoardView from '@/views/NewBoardView.vue'
 import BoardView from '@/views/BoardView.vue'
 import ProfileView from '@/views/ProfileView.vue'
+import ForgotPasswordView from '@/views/ForgotPasswordView.vue'
+import ResetPasswordView from '@/views/ResetPasswordView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,6 +21,17 @@ const router = createRouter({
       path: '/cadastro',
       name: 'signup',
       component: SignUpView,
+    },
+    {
+      path: '/reset',
+      name: 'reset',
+      component: ForgotPasswordView,
+    },
+    {
+      path: '/reset-password',
+      name: 'reset-password',
+      component: ResetPasswordView,
+      props: (route) => ({ token: route.query.token }),
     },
     {
       path: '/home',

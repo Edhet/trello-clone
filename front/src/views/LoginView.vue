@@ -73,7 +73,7 @@ async function userLogin() {
         <p>Não possui conta?</p>
         <RouterLink class="underline" to="/cadastro">Cadastre-se</RouterLink>
       </div>
-      <RouterLink to="/" class="font-weight-bold text-decoration-underline"
+      <RouterLink to="/reset" class="font-weight-bold text-decoration-underline"
         >Esqueci minha senha
       </RouterLink>
     </form>

@@ -32,6 +32,21 @@ export class JwtService {
         return token
     }
 
+    createResetJwt(email: string ): string {
+        logger.trace(`Creating JWT for successful login attempt`)
+        const now = new Date()
+        const expireDate = new Date(now.getTime() + this.MILIS_IN_HOUR * this.JWT_EXPIRE_HOURS)
+
+        const unsignedJwt: TokenInfo = {
+            email: email,
+            authDate: now,
+            expireDate: expireDate
+        }
+        const token = jwt.sign(JSON.stringify(unsignedJwt), this.JWT_PASSWORD)
+        logger.trace(`JWT Created`)
+        return token
+    }
+
     decodeAuthHeader(authHeader: string | undefined) {
         const token = this.extractTokenFromAuthHeader(authHeader)
         if (!token) throw new BadRequestError("Header de autorização ausente")

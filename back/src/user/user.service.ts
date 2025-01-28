@@ -9,6 +9,7 @@ import BadRequestError from "../shared/error/bad-request.error";
 import NotFoundError from "../shared/error/not-found.error";
 import BoardInterface from "../board/board.model";
 import AccessType from "./access-type.enum";
+import { EmailService } from "../shared/services/email.service";
 
 @injectable()
 @autoInjectable()
@@ -17,7 +18,7 @@ export class UserService {
     private readonly SALT_ROUNDS = Number(process.env.SALT_ROUNDS)
     private readonly EMAIL_PATTERN = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/
 
-    constructor(private jwtService: JwtService) { }
+    constructor(private jwtService: JwtService, private emailService: EmailService) { }
 
     async getUserById(id: string) {
         logger.trace(`Starting query for user with id: ${id}`)
@@ -82,6 +83,25 @@ export class UserService {
         user.password = hash
         user.save()
         logger.trace(`Password changed`)
+    }
+
+    async sendPasswordResetEmail(email: string) {
+        logger.trace(`Starting password reset email process for ${email}`);
+
+        const user = await this.getUser(email);
+
+        const resetToken = this.jwtService.createResetJwt(email);
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+        const emailContent = {
+            to: email,
+            subject: "Recuperação de Senha",
+            text: `Olá,\n\nClique no link abaixo para redefinir sua senha:\n\n${resetLink}\n\nSe você não solicitou esta alteração, ignore este email.`,
+        };
+
+        await this.emailService.sendEmail(emailContent);
+
+        logger.trace(`Password reset email sent to ${email}`);
     }
 
     async addAccess(userEmail: string, board: BoardInterface, type: AccessType) {

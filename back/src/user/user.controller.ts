@@ -57,4 +57,19 @@ export class UserController {
 
         return res.status(200).json()
     }
+
+    @Post('/reset-password')
+    async sendPasswordResetEmail(@Req() req: Request, @Res() res: Response, @Body() body: { email: string }) {
+        logger.trace(`Starting request for password reset`);
+
+        const { email } = body;
+        if (!email) {
+            return res.status(400).json({ message: "Email field is required." });
+        }
+
+        await this.userService.sendPasswordResetEmail(email);
+
+        return res.status(200).json({ message: "Reset email sent." });
+    }
+
 }

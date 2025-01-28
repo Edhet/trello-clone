@@ -137,33 +137,28 @@ async function shareBoard() {
 
         <v-form @submit.prevent="shareBoard" :disabled="board.type == AccessType.READ_ONLY">
           <h3 class="text-2xl mt-24 mb-4">Alterar permissões do quadro</h3>
-          <v-text-field v-model="sharing.email" required type="email" placeholder="amigo@email.com" label="Email"></v-text-field>
-          <v-select v-model="sharing.type" required
-            label="Tipo de acesso"
-            :items="[AccessType.READ_ONLY, AccessType.EDIT]"
-          ></v-select>
+          <v-text-field v-model="sharing.email" required type="email" placeholder="amigo@email.com"
+            label="Email"></v-text-field>
+          <v-select v-model="sharing.type" required label="Tipo de acesso"
+            :items="[AccessType.READ_ONLY, AccessType.EDIT]"></v-select>
           <v-btn class="mt-6" block color="primary" type="submit">Dar acesso</v-btn>
 
         </v-form>
       </div>
       <v-divider></v-divider>
 
-<div v-if="!editing">
-  <v-row class="mt-12">
-    <v-text-field label="Nome da lista" v-model="newListName" :disabled="board.type == AccessType.READ_ONLY"></v-text-field>
-    <v-btn @click="criarLista()" icon="mdi-plus" :disabled="board.type == AccessType.READ_ONLY"></v-btn>
-  </v-row>
-  <div class="flex overflow-x-auto gap-6 h-full">
-    <template v-for="list in listasOrdenadas" :key="list._id">
-      <list-component
-        :disabled="board.type == AccessType.READ_ONLY"
-        :lista="list"
-        :board="board"
-        :bg-color="board.board.backgroundColor"
-        :text-color="board.board.textColor"
-      ></list-component>
-    </template>
-  </div>
+      <div v-if="!editing">
+        <v-row class="mt-12">
+          <v-text-field label="Nome da lista" v-model="newListName"
+            :disabled="board.type == AccessType.READ_ONLY"></v-text-field>
+          <v-btn @click="criarLista()" icon="mdi-plus" :disabled="board.type == AccessType.READ_ONLY"></v-btn>
+        </v-row>
+        <div class="flex overflow-x-auto gap-6 h-full">
+          <template v-for="list in listasOrdenadas" :key="list._id">
+            <list-component :disabled="board.type == AccessType.READ_ONLY" :lista="list" :board="board"
+              :bg-color="board.board.backgroundColor" :text-color="board.board.textColor"></list-component>
+          </template>
+        </div>
       </div>
     </div>
   </v-container>
